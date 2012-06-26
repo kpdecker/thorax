@@ -76,23 +76,6 @@ _.extend(View, {
         addEvent(this.events, name, events[name]);
       }
     }
-  },
-  unregisterEvents: function(events) {
-    if (typeof events === 'undefined') {
-      this.events = {
-        model: {},
-        collection: {}
-      };
-    } else if (typeof events === 'string' && arguments.length === 1) {
-      if (events === 'model' || events === 'collection') {
-        this.events[events] = {};
-      } else {
-        this.events[events] = [];
-      }
-    //remove collection or model events
-    } else if (arguments.length === 2) {
-      this.events[arguments[0]][arguments[1]] = [];
-    }
   }
 });
 
