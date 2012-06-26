@@ -7,7 +7,7 @@
     "base": {
       "scripts": [
         {
-          "src": "js/lib/zepto.js",
+          "src": "js/lib/jquery.js",
           "global": true
         },
         {
@@ -24,22 +24,6 @@
         },
         {
           "src": "js/lib/thorax.js",
-          "global": true
-        },
-        {
-          "src": "js/lib/thorax.loading.js",
-          "global": true
-        },
-        {
-          "src": "js/lib/thorax.form.js",
-          "global": true
-        },
-        {
-          "src": "js/lib/thorax.form-validation.js",
-          "global": true
-        },
-        {
-          "src": "js/lib/thorax.form-helpers.js",
           "global": true
         },
         {

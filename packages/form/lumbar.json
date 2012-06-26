@@ -3,13 +3,7 @@
     "base": {
       "scripts": [
         {
-          "src": "js/lib/thorax.form.js"
-        },
-        {
-          "src": "js/lib/thorax.form-helpers.js"
-        },
-        {
-          "src": "js/lib/thorax.form-validation.js"
+          "src": "js/lib/thorax.loading.js"
         }
       ]
     }

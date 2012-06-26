@@ -52,7 +52,15 @@ function buildPackage(name, target, complete) {
 
     async.forEachSeries(directives, function(fileInfo, next) {
       function copy() {
-        execute(['cp -r ' + path.join(__dirname, '..', fileInfo.sourcePath) + (!fileInfo.isFile ? '/' : '') + ' ' + path.join(target, fileInfo.targetPath)], next);
+        if (fileInfo.isFile && path.basename(fileInfo.sourcePath) === 'package.json') {
+          deepExtend(packageJSONByTarget[pacakgeJSONLocation], JSON.parse(fs.readFileSync(fileInfo.sourcePath)));
+          next();
+        } else if (fileInfo.isFile && path.basename(fileInfo.sourcePath) === 'lumbar.json') {
+          deepExtend(lumbarJSONByTarget[lumbarJSONLocation], JSON.parse(fs.readFileSync(fileInfo.sourcePath)));
+          next();
+        } else {
+          execute(['cp -r ' + path.join(__dirname, '..', fileInfo.sourcePath) + (!fileInfo.isFile ? '/' : '') + ' ' + path.join(target, fileInfo.targetPath)], next);
+        }
       }
       if (!path.existsSync(path.join(target, fileInfo.targetPath)) && !fileInfo.isFile) {
         mkdirp(path.join(target, fileInfo.targetPath), copy)
@@ -82,10 +90,20 @@ function buildPackage(name, target, complete) {
 }
 
 function buildAllPackages() {
+  var concatBuilds = {};
+  _.each(packageJSON.builds, function(build, name) {
+    if (build.sources && build.target) {
+      concatBuilds[name] = build;
+    }
+  });
+  
   var builds = _.clone(packageJSON.builds);
-  delete builds.thorax;
+  _.keys(concatBuilds).forEach(function(key) {
+    delete builds[key]
+  });
 
-  buildThorax(packageJSON.builds.thorax, function() {
+  buildConcatBuilds(concatBuilds, function() {
+    //console.log('will build ',builds)
     async.forEachSeries(_.map(builds, function(build, name) {
       return {
         name: name,
@@ -117,10 +135,24 @@ function buildAllPackages() {
   });
 }
 
-function buildThorax(info, next) {
-  fs.writeFile(info.target, info.sources.map(function(source) {
-    return fs.readFileSync(path.join(__dirname, '..', source));
-  }).join("\n"), next);
+function buildConcatBuilds(builds, next) {
+  async.forEachSeries(_.map(builds, function(build, key) {
+    return build;
+  }), function(item, next) {
+    var targetPath = path.join(__dirname, '..', item.target),
+        targetDir = path.dirname(targetPath);
+    function writeFile() {
+      console.log('wrote', targetPath);
+      fs.writeFile(targetPath, item.sources.map(function(source) {
+        return fs.readFileSync(path.join(__dirname, '..', source));
+      }).join("\n"), next);
+    }
+    if (!path.existsSync(targetDir)) {
+      mkdirp(targetDir, writeFile);
+    } else {
+      writeFile();
+    }
+  }, next);
 }
 
 buildAllPackages();

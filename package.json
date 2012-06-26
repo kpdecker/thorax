@@ -55,39 +55,61 @@
         "packages/base/js/src/$.js",
         "packages/base/js/src/footer.js"
       ],
-      "target": "thorax.js"
+      "target": "public/builds/base/js/lib/thorax.js"
+    },
+    "thorax.loading": {
+      "sources": [
+        "packages/loading/js/src/loading.js",
+        "packages/loading/js/src/helpers.js"
+      ],
+      "target": "public/builds/base/js/lib/thorax.loading.js"
+    },
+    "thorax.form": {
+      "sources": [
+        "packages/form/js/src/form.js",
+        "packages/form/js/src/validation.js",
+        "packages/form/js/src/helpers.js"
+      ],
+      "target": "public/builds/base/js/lib/thorax.form.js"
+    },
+    "phoenix": {
+      "sources": [
+        "packages/loading/js/src/loading.js",
+        "packages/form/js/src/form.js"
+      ],
+      "target": "public/builds/phoenix/thorax.js"
     },
     "boilerplate-html": {
-      "files": {
-        "thorax.js": "js/lib/thorax.js"
-      },
       "directories": {
         "packages/boilerplate-html": "",
-        "packages/bootstrap": "",
         "packages/base/js/lib": "js/lib",
-        "packages/loading/js/lib": "js/lib",
-        "packages/form/js/lib": "js/lib"
+        "public/builds/base/js/lib": "js/lib",
+        "packages/bootstrap": ""
       }
     },
     "boilerplate-lumbar": {
       "files": {
-        "thorax.js": "js/lib/thorax.js"
+        "packages/boilerplate-lumbar/lumbar.json": "lumbar.json",
+        "packages/form/lumbar.json": "lumbar.json",
+        "packages/loading/lumbar.json": "lumbar.json"
       },
       "directories": {
         "packages/boilerplate-lumbar": "",
+        "public/builds/base/js/lib": "js/lib",
         "packages/base/js/lib": "js/lib",
         "packages/bootstrap": "",
-        "packages/loading": "",
-        "packages/form": "",
-        "packages/admin": "",
-        "packages/base/js/lib": "public/admin/js/lib",
-        "packages/form/js/lib": "public/admin/js/lib"
+        "packages/loading/js/views": "js/views",
+        "packages/loading/styles": "styles",
+        "packages/loading/templates": "templates"
       }
     },
     "hello-world-lumbar": {
       "builds": ["boilerplate-lumbar"],
       "directories": {
-        "packages/hello-world": ""
+        "packages/hello-world": "",
+        "packages/admin": "",
+        "packages/base/js/lib": "public/admin/js/lib",
+        "public/builds/base/js/lib": "public/admin/js/lib"
       }
     },
     "docs": {
@@ -101,15 +123,10 @@
     },
     "test": {
       "directories": {
+        "packages/base/js/lib": "js/lib",
+        "public/builds/base/js/lib": "js/lib",
         "packages/test": "",
         "packages/base/js/lib": "js/lib"
-      },
-      "files": {
-        "thorax.js": "js/lib/thorax.js",
-        "packages/loading/js/lib/thorax.loading.js": "js/lib/thorax.loading.js",
-        "packages/form/js/lib/thorax.form.js": "js/lib/thorax.form.js",
-        "packages/form/js/lib/thorax.form-validation.js": "js/lib/thorax.form-validation.js",
-        "packages/form/js/lib/thorax.form-helpers.js": "js/lib/thorax.form-helpers.js"
       }
     }
   }

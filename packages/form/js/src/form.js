@@ -3,7 +3,7 @@
       _setModelOptions = Thorax.View.prototype.setModelOptions;
 
   _.extend(Thorax.View.prototype, {
-        //serializes a form present in the view, returning the serialized data
+    //serializes a form present in the view, returning the serialized data
     //as an object
     //pass {set:false} to not update this.model if present
     //can pass options, callback or event in any order
