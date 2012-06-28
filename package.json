@@ -84,7 +84,8 @@
       "files": {
         "packages/boilerplate-lumbar/lumbar.json": "lumbar.json",
         "packages/form/lumbar.json": "lumbar.json",
-        "packages/loading/lumbar.json": "lumbar.json"
+        "packages/loading/lumbar.json": "lumbar.json",
+        "packages/bootstrap/lumbar.json": "lumbar.json"
       },
       "directories": {
         "packages/boilerplate-lumbar": "",
@@ -108,7 +109,6 @@
     "docs": {
       "builds": ["boilerplate-lumbar"],
       "directories": {
-        "packages/bootstrap": "",
         "packages/loading": "",
         "packages/form": "",
         "packages/docs": ""

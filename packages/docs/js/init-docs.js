@@ -1,3 +1,3 @@
-exports.bind('ready', function() {
+Application.on('ready', function() {
   console.log('ready!');
 });

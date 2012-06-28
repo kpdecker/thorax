@@ -1,28 +1,20 @@
-Application.Router.extend({
-  name: module.name,
-  routes: module.routes,
+module.router({
   index: function() {
-    var view = this.view('docs/index');
-    Application.setView(view);
+    Application.setView('docs/index');
   },
   loading: function() {
-    var view = this.view('docs/loading');
-    Application.setView(view);
+    Application.setView('docs/loading');
   },
   form: function() {
-    var view = this.view('docs/form');
-    Application.setView(view);
+    Application.setView('docs/form');
   },
   mobile: function() {
-    var view = this.view('docs/mobile');
-    Application.setView(view);
+    Application.setView('docs/mobile');
   },
   start: function() {
-    var view = this.view('docs/start');
-    Application.setView(view);
+    Application.setView('docs/start');
   },
   examples: function() {
-    var view = this.view('docs/examples');
-    Application.setView(view);
+    Application.setView('docs/examples');
   }
-})
+});

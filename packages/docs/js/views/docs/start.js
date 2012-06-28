@@ -1,3 +1,3 @@
-Application.View.extend({
-  name: 'docs/start'
+Application.view('docs/start', {
+
 });

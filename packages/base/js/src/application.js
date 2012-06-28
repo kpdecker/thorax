@@ -28,8 +28,12 @@ var Application = Layout.extend({
   //don't bind it as it is the registry function
   setModel:function(){},
   render: function(output) {
-    if (output || this._template) {
-      return Layout.prototype.render.call(this, output || this._template);
+    //TODO: fixme, lumbar inserts templates after JS, most of the time this is fine
+    //but Application will be created in init.js (unlike most views)
+    //so need to put this here so the template will be picked up
+    var applicationTemplate = Thorax.registry.template(this.name, null, true);
+    if (output || this._template || applicationTemplate) {
+      return Layout.prototype.render.call(this, output || this._template || applicationTemplate);
     } else {
       ++this._renderCount;
       //set the layoutCidAttributeName on this.$el if there was no template

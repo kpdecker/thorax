@@ -1,5 +1,4 @@
-var NavigationView = exports.View.extend({
-  name: 'navigation',
+Application.view('navigation', {
   initialize: function() {
     Backbone.history.bind('route', _.bind(function(router, path) {
       var regexp = new RegExp('\#?\/' + (path.match(/index$/) ? '' : path))

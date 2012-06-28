@@ -1,5 +1,4 @@
-Application.View.extend({
-  name: 'docs/form',
+Application.view('docs/form', {
   events: {
     'submit form': function(event) {
       this.success = false;

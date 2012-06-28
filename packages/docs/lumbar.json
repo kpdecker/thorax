@@ -1,5 +1,12 @@
 {
   "modules": {
+    "base": {
+      "scripts": [
+        {
+          "src": "js/views/navigation.js"
+        }
+      ]
+    },
     "docs": {
       "routes": {
         "": "index",
@@ -11,7 +18,7 @@
       },
       "scripts": [
         {
-          "src": "js/views/docs/navigation.js"
+          "src": "js/routers/docs.js"
         },
         {
           "src": "js/views/docs/index.js"
@@ -58,8 +65,8 @@
     "js/views/docs/examples.js": [
       "templates/docs/examples.handlebars"
     ],
-    "js/views/docs/navigation.js": [
-      "templates/docs/navigation.handlebars"
+    "js/views/navigation.js": [
+      "templates/navigation.handlebars"
     ]
   }
 }
