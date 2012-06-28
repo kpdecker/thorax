@@ -7,14 +7,7 @@ this.Thorax = Thorax = {
       scope = outerScope.Application = {};
     }
   
-    _.extend(scope, Backbone.Events, {
-      templates: {},
-      Views: {},
-      Mixins: {},
-      Models: {},
-      Collections: {},
-      Routers: {}
-    });
+    _.extend(scope, Backbone.Events, Thorax.registry);
   
     Thorax.templatePathPrefix = options && typeof options.templatePathPrefix !== 'undefined' ? options.templatePathPrefix : '';
     

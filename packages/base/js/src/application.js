@@ -1,35 +1,30 @@
-Thorax.Application = Layout.extend({
-  //will look for application.handlebars, but only if present
-  //layout ignores views
-  name: 'application',
+var Application = Layout.extend({
   initialize: function(options) {
-    //DEPRECATION: backwards compatibility with < 1.3
-    _.extend(this, Thorax.registry);
-
+    //"template" method has special meaning on application object
+    //as it is a registry provider
+    if (this.template != Application.prototype.template) {
+      this._template = this.template;
+      this.template = Application.prototype.template;
+      if (typeof this._template === 'string') {
+        this._template = Handlebars.compile(this._template);
+      }
+    }
+    this.template = Application.prototype.template;
+    _.extend(this, options || {});
     //ensure backbone history has started
     Backbone.history || (Backbone.history = new Backbone.History);
     _.extend(this, {
-      Layout: Layout.extend({
-        application: this
-      }),
-      View: View.extend({
-        application: this
-      }),
-      Model: Model.extend({
-        application: this
-      }),
-      Collection: Collection.extend({
-        application: this
-      }),
-      Router: Router.extend({
-        application: this
-      }),
-      ViewController: ViewController.extend({
-        application: this
-      })
+      Layout: Layout.extend({}),
+      View: View.extend({}),
+      Model: Model.extend({}),
+      Collection: Collection.extend({}),
+      Router: Router.extend({}),
+      ViewController: ViewController.extend({})
     });
-
-    _.extend(this, options || {});
+  },
+  render: function(output) {
+    //if (!output && )
+    ++this._renderCount;
   },
   start: function(options) {
     this.render();

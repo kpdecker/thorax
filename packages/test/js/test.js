@@ -2,38 +2,29 @@ $(function() {
 
   var Application = new Thorax.Application();
   Application.start();
-  _.extend(Application.templates, {
-    'letter.handlebars': Handlebars.compile('{{collection tag="ul"}}'), 
-    'letter-item.handlebars': Handlebars.compile("<li>{{letter}}</li>"),
-    'letter-empty.handlebars': Handlebars.compile("<li>empty</li>"),
-    'letter-multiple-item.handlebars': Handlebars.compile("<li>{{letter}}</li><li>{{letter}}</li>"),
-    'parent.handlebars': Handlebars.compile("<div>{{view child}}</div>"),
-    'child.handlebars': Handlebars.compile("<div>{{value}}</div>")
-  });
 
+  Application.template('letter', '{{collection tag="ul"}}');
+  Application.template('letter-item', '<li>{{letter}}</li>');
+  Application.template('letter-empty', '<li>empty</li>');
+  Application.template('letter-multiple-item', '<li>{{letter}}</li><li>{{letter}}</li>');
+  Application.template('parent', '<div>{{view child}}</div>');
+  Application.template('child', '<div>{{value}}</div>');
   var LetterModel = Application.Model.extend({});
 
   var letterCollection = new Application.Collection(['a','b','c','d'].map(function(letter) {
     return {letter: letter};
   }));
 
-  var LetterCollectionView = Application.View.extend({
-    name: 'letter'
-  });
+  var LetterCollectionView = Application.view('letter', {});
 
-  var LetterItemView = Application.View.extend({
-    name: 'letter-item'
-  });
+  var LetterItemView = Application.view('letter-item', {});
 
-  var LetterEmptyView = Application.View.extend({
-    name: 'letter-empty'
-  });
+  var LetterEmptyView = Application.view('letter-empty', {});
 
   test("isPopulated()", function() {
     ok(letterCollection.isPopulated());
     ok(letterCollection.at(0).isPopulated());
   });
-
   test("_shouldFetch", function() {
     var options = {fetch: true};
     var view = new Application.View();
@@ -96,7 +87,6 @@ $(function() {
     view.setModel(model);
     equal(view.html(), 'abc');
   });
-
   //DEPRECATION: supports syntax for < 1.3
   test("collection view binding", function() {
     function runCollectionTests(view, indexMultiplier, msg) {
@@ -184,14 +174,14 @@ $(function() {
     
     var viewReturningMixed = new (LetterCollectionView.extend({
       renderItem: function(partial, model, i) {
-        return i % 2 === 0 ? new LetterItemView({model: model}) : this.template(this.name + '-item', model.attributes);
+        return i % 2 === 0 ? new LetterItemView({model: model}) : this.renderTemplate(this.name + '-item', model.attributes);
       }
     }));
     runCollectionTests(viewReturningMixed, 1, 'renderItem returning mixed');
     
     var viewReturningMultiple = new (LetterCollectionView.extend({
       renderItem: function(partial, model, i) {
-        return this.template('letter-multiple-item', model.attributes);
+        return this.renderTemplate('letter-multiple-item', model.attributes);
       }
     }));
     runCollectionTests(viewReturningMultiple, 2, 'renderItem returning string');
@@ -239,8 +229,7 @@ $(function() {
     view.render();
     equal(view.$('li').length, letterCollection.models.length * 4);
 
-    var SubViewWithSameCollection = Application.View.extend({
-      name: 'sub-view-with-same-collection',
+    var SubViewWithSameCollection = Application.view('sub-view-with-same-collection', {
       template: '{{collection a tag="ul" item-template="letter-item"}}'
     });
     var view = new Application.View({
@@ -394,12 +383,11 @@ $(function() {
     }
 
     //test with embedded view
-    Application.View.extend({
-      name: 'Comments',
+    Application.view('comments', {
       template: '{{#collection comments}}<p>{{comment}}</p>{{#collection authors}}<span>{{author}}</span>{{/collection}}{{/collection}}'
     });
     var view = new Application.View({
-      template: '{{#empty posts}}empty{{else}}{{#collection posts name="outer"}}<h2>{{title}}</h2>{{view "Comments" comments=comments}}</div>{{/collection}}{{/empty}}'
+      template: '{{#empty posts}}empty{{else}}{{#collection posts name="outer"}}<h2>{{title}}</h2>{{view "comments" comments=comments}}</div>{{/collection}}{{/empty}}'
     });
     testNesting(view, 'nested view');
 
@@ -471,16 +459,14 @@ $(function() {
   test("child views", function() {
     var childRenderedCount = 0,
         parentRenderedCount = 0;
-    var Child = Application.View.extend({
-      name: 'child',
+    var Child = Application.view('child', {
       events: {
         rendered: function() {
           ++childRenderedCount;
         }
       }
     });
-    var Parent = Application.View.extend({
-      name: 'parent',
+    var Parent = Application.view('parent', {
       events: {
         rendered: function() {
           ++parentRenderedCount;
@@ -490,7 +476,7 @@ $(function() {
         this.childModel = new Application.Model({
           value: 'a'
         });
-        this.child = this.view('child', {
+        this.child = new (Application.view('child'))({
           model: this.childModel
         });
       }
@@ -518,19 +504,7 @@ $(function() {
     equal(parentRenderedCount, 4);
     equal(childRenderedCount, 3);
   });
-
-  test("Pass a function or view class to view()", function() {
-    var Child = Application.View.extend({
-      isChild: true
-    });
-    var parent = new Application.View();
-    ok(parent.view(Child).isChild);
-    equal(parent.view(Child, {key: 'value'}).key, 'value');
-    equal(parent.view(function() {
-      return new Child({key: 'value'});
-    }).key, 'value');
-  });
-
+  
   test("helper and local scope collision", function() {
     var child = new Application.View({
       collection: letterCollection,
@@ -564,7 +538,7 @@ $(function() {
     childReturning$.render();
     equal(childReturning$.$('p').html(), 'template');
   });
-  
+
   test("local view functions are called in template scope", function() {
     var child = new Application.View({
       template: '{{key "value"}}',
@@ -578,12 +552,11 @@ $(function() {
 
   test("template not found handling", function() {
     var view = new Application.View();
-    equal('', view.template('foo', {}, true));
     raises(function() {
-      view.template('foo');
+      view.render();
     });
   });
-  
+
   test("render() subclassing", function() {
     var a = new Application.View({
       render: function() {
@@ -761,7 +734,7 @@ $(function() {
         parentClickedCount = 0;
     
     var Child = Application.View.extend({
-      name: 'child',
+      template: Application.template('child'),
       events: {
         'click div': function() {
           ++childClickedCount;
@@ -770,14 +743,14 @@ $(function() {
     });
     
     var Parent = Application.View.extend({
-      name: 'parent',
+      template: Application.template('parent'),
       events: {
         'click div': function() {
           ++parentClickedCount;
         }
       },
       initialize: function() {
-        this.child = this.view('child', {
+        this.child = new Child({
           value: 'a'
         });
       }
@@ -941,6 +914,33 @@ $(function() {
     Backbone.history.navigate('two', {trigger: true});
     equal(c.$('.one').length, 0);
     equal(c.$('.two').length, 1);
+  });
+
+  test("registry", function() {
+    raises(function() {
+      Application.view('a-name');
+    }, 'throws error when view does not exist');
+    var viewClass = Application.view('a-name', {}, {});
+    equal(viewClass.prototype.name, 'a-name', 'sets a name attribute on view class');
+    equal((new viewClass).name, 'a-name', 'sets a name attribute on view instance');
+    var viewClassB = Application.view('b-name', viewClass.extend({
+      key: 'value'
+    }));
+    equal(viewClassB.prototype.key, 'value', 'can accept a class as a value');
+    Application.view('b-name', viewClass.extend({
+      key: 'value2'
+    }));
+    equal(Application.view('b-name').prototype.key, 'value2', 'will overwrite a previous class when passed a new one');
+    Application.view('a-name', {
+      key: 'value'
+    });
+    equal(Application.view('a-name').prototype.key, 'value', 'registry will extend an existing class prototype');
+
+    Application.template('test-a', '<p>{{key}}</p>');
+    Application.template('test-b', Handlebars.compile('<p>{{key}}</p>'));
+
+    equal(Application.template('test-a')({key:'value'}), '<p>value</p>', 'will compile a string to a template');
+    equal(Application.template('test-b')({key:'value'}), '<p>value</p>', 'will accept a template function');
   });
 
   test("$.fn.view, $.fn.model, $.fn.collection", function() {

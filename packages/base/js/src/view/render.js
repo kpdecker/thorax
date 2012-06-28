@@ -2,7 +2,10 @@ _.extend(View.prototype, {
   render: function(output) {
     destroyPartials.call(this);
     if (typeof output === 'undefined' || (!_.isElement(output) && !is$(output) && !(output && output.el) && typeof output !== 'string')) {
-      output = this.renderTemplate(this._template || getViewName.call(this), this._getContext(this.model));
+      if (!this.template) {
+        throw new Error('View ' + (this.name || this.cid) + '.render() was called with no content and no template set on the view.');
+      }
+      output = this.renderTemplate(this.template, this._getContext(this.model));
     } else if (typeof output === 'function') {
       output = this.renderTemplate(output, this._getContext(this.model));
     }
@@ -23,11 +26,7 @@ _.extend(View.prototype, {
     } else {
       var context = _.extend({}, (model && model.attributes) || {});
       _.each(this.context, function(value, key) {
-        if (typeof value === 'function') {
-          context[key] = value.call(this);
-        } else {
-          context[key] = value;
-        }
+        context[key] = value;
       }, this);
       return context;
     }
@@ -39,7 +38,7 @@ _.extend(View.prototype, {
     if (typeof file === 'function') {
       template = file;
     } else {
-      template = this.loadTemplate(file, data, Thorax.registry);
+      template = this._loadTemplate(file);
     }
     if (!template) {
       if (ignoreErrors) {
@@ -52,9 +51,8 @@ _.extend(View.prototype, {
     }
   },
 
-  loadTemplate: function(file, data, scope) {
-    var fileName = Thorax.templatePathPrefix + file + (file.match(handlebarsExtensionRegExp) ? '' : '.' + handlebarsExtension);
-    return scope.templates[fileName];
+  _loadTemplate: function(file, ignoreErrors) {
+    return Thorax.registry.template(file, null, ignoreErrors);
   },
 
   html: function(html) {

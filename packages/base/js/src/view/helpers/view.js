@@ -3,8 +3,9 @@ View.registerHelper('view', function(view, options) {
   if (!view) {
     return '';
   }
-  var instance = this._view.view(view, options ? options.hash : {}),
+  var instance = getViewInstance(view, options ? options.hash : {}),
       placeholder_id = instance.cid + '-' + _.uniqueId('placeholder');
+  this._view._views[instance.cid] = instance;
   if (options.fn) {
     viewTemplateOverrides[placeholder_id] = options.fn;
   }
@@ -12,6 +13,16 @@ View.registerHelper('view', function(view, options) {
   htmlAttributes[viewPlaceholderAttributeName] = placeholder_id;
   return new Handlebars.SafeString(View.tag.call(this, htmlAttributes));
 });
+
+function getViewInstance(name, attributes) {
+  if (typeof name === 'string') {
+    return new (Thorax.registry.view(name))(attributes);
+  } else if (typeof name === 'function') {
+    return new name(attributes);
+  } else {
+    return name;
+  }
+}
 
 //called from View.prototype.html()
 function appendViews(scope) {
@@ -35,3 +46,4 @@ function appendViews(scope) {
     }
   }, this);
 }
+

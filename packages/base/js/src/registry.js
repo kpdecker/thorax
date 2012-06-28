@@ -7,49 +7,92 @@ Thorax.registry = {
   Routers: {}
 };
 
-//if a "name" property is specified during extend set it on the registry
-//views need special property inheritence
-//routers will be treated as initialized singletons
 _.each({
-  Model: 'Models',
-  Collection: 'Collections',
-  View: 'Views',
-  Router: 'Routers'
-}, function(registryName, className) {
-  Thorax[className].extend = function(protoProps, classProps) {
-    var child = Backbone[className].extend.call(this, protoProps, classProps);
-    if (child.prototype.name) {
-      Thorax.registry[registryName][child.prototype.name] = className === 'Router' ? new child : child;
+  view: 'Views',
+  model: 'Models',
+  collection: 'Collections',
+  template: 'templates',
+  router: 'Routers'
+}, function(registryName, methodName) {
+  var registry = Thorax.registry[registryName];
+  Thorax.registry[methodName] = function(name, value, ignoreErrors) {
+    if (methodName === 'template') {
+      //append templatePathPrefix if getting
+      if (!value) {
+        name = Thorax.templatePathPrefix + name;
+      }
+      //always remove handlebars extension wether setting or getting
+      name = name.replace(handlebarsExtensionRegExp, '')
     }
-    if (className === 'View') {
-      child.mixins = _.clone(this.mixins);
-      cloneEvents(this, child, 'events');
-      cloneEvents(this.events, child.events, 'model');
-      cloneEvents(this.events, child.events, 'collection');
+    if (!value) {
+      if (!registry[name] && !ignoreErrors) {
+        throw new Error(methodName + ': ' + name + ' does not exist.');
+      }
+      return registry[name];
+    } else {
+      if (methodName === 'template' && typeof value === 'string') {
+        return registry[name] = Handlebars.compile(value);
+      } else {
+        return registry[name] = value;
+      }
     }
-    return child;
   };
 });
 
-function cloneEvents(source, target, key) {
-  source[key] = _.clone(target[key]);
-  //need to deep clone events array
-  _.each(source[key], function(value, _key) {
-    if (_.isArray(value)) {
-      target[key][_key] = _.clone(value);
-    }
-  });
-}
+Thorax.registry.view('application', Application);
 
-function getView(name, attributes) {
-  if (typeof name === 'string') {
-    if (!Thorax.registry.Views[name]) {
-      throw new Error('view: ' + name + ' does not exist.');
+_.each({
+  view: 'View',
+  model: 'Model',
+  collection: 'Collection',
+  router: 'Router'
+}, function(className, methodName) {
+  Application.prototype[methodName] = function(name, protoProps, classProps) {
+    var _name = String(name);
+    if (arguments.length === 1) {
+      return Thorax.registry[methodName](name);
+    } else {
+      var existing = Thorax.registry[methodName](name, null, true);
+      if (!existing) {
+        if (protoProps.prototype) {
+          protoProps.prototype.name = name;
+          return Thorax.registry[methodName](name, className === 'Router' ? new protoProps : protoProps);
+        } else {
+          protoProps.name = name;
+          var klass = this[className].extend(protoProps, classProps);
+          return Thorax.registry[methodName](name, className === 'Router' ? new klass : klass);
+        }
+      } else {
+        if (protoProps.prototype) {
+          existing = protoProps;
+          Thorax.registry[methodName](name, existing);
+        } else if (protoProps) {
+          _.extend(existing.prototype, protoProps);
+        }
+        if (classProps) {
+          _.extend(exisitng, classProps);
+        }
+        return existing;
+      }
     }
-    return new Thorax.registry.Views[name](attributes);
-  } else if (typeof name === 'function') {
-    return new name(attributes);
-  } else {
-    return name;
-  }
-}
+  };
+});
+
+Application.prototype.template = Thorax.registry.template;
+
+Thorax.addModuleMethods = function(module, application) {
+  module.router = function(protoProps) {
+    var router = application.router(module.name);
+    if (arguments.length === 0) {
+      return router;
+    }
+    if (!router) {
+      protoProps.name = module.name;
+      protoProps.routes = module.routes;
+      return application.router(module.name, protoProps);
+    } else {
+      _.extend(router, protoProps);
+      return router;
+    }
+  };
+};

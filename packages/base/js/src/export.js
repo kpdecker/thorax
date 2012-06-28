@@ -6,5 +6,6 @@ this.Thorax = Thorax = {
   Model: Model,
   Collection: Collection,
   Router: Router,
+  Application: Application,
   templatePathPrefix: ''
 };

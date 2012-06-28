@@ -30,7 +30,6 @@ _.extend(Partial.prototype, Backbone.Events, {
     }
   },
   render: function(options) {
-    console.log(this.context(options));
     this.html(this.fn(this.context(options)));
   },
   freeze: function() {

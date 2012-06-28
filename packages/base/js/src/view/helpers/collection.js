@@ -227,7 +227,7 @@ function renderEmpty(partial, collection) {
   var collectionOptions = partial.options,
       context = this.emptyContext();
   if (collectionOptions['empty-view']) {
-    var view = this.view(collectionOptions['empty-view'], context);
+    var view = getViewInstance(collectionOptions['empty-view'], context);
     if (collectionOptions['empty-template']) {
       view.render(view.renderTemplate(collectionOptions['empty-template'], context));
     } else {
@@ -235,17 +235,8 @@ function renderEmpty(partial, collection) {
     }
     return view;
   } else {
-    var emptyTemplate = collectionOptions['empty-template'];
-    if (!emptyTemplate) {
-      var name = getViewName.call(this, true);
-      if (name) {
-        emptyTemplate = this.loadTemplate(name + '-empty', {}, Thorax.registry);
-      }
-      if (!emptyTemplate) {
-        return;
-      }
-    }
-    return this.renderTemplate(emptyTemplate, context);
+    var emptyTemplate = collectionOptions['empty-template'] || (this.name && this._loadTemplate(this.name + '-empty', true));
+    return emptyTemplate && this.renderTemplate(emptyTemplate, context);
   }
 }
 
@@ -255,7 +246,7 @@ function renderItem(partial, item, i, collection) {
   }
   var collectionOptions = partial.options;
   if (collectionOptions['item-view']) {
-    var view = this.view(collectionOptions['item-view'], {
+    var view = getViewInstance(collectionOptions['item-view'], {
       model: item
     });
     if (collectionOptions['item-template']) {
@@ -265,14 +256,19 @@ function renderItem(partial, item, i, collection) {
     }
     return view;
   } else {
-    return this.renderTemplate(collectionOptions['item-template'] || getViewName.call(this) + '-item', this.itemContext(item, i));
+    var itemTemplate = collectionOptions['item-template'] || (this.name && this._loadTemplate(this.name + '-item', true));
+    if (!itemTemplate) {
+      throw new Error('collection helper in View: ' + (this.name || this.cid) + ' requires an item template.');
+    }
+    return this.renderTemplate(itemTemplate, this.itemContext(item, i));
   }
 }
 
 function appendEmpty(partial, collection) {
   var collectionElement = partial.$el;
   collectionElement.empty();
-  this.appendItem(partial, collection, this.renderEmpty(partial, collection), 0, {
+  var emptyContent = this.renderEmpty(partial, collection);
+  emptyContent && this.appendItem(partial, collection, emptyContent, 0, {
     silent: true
   });
   this.trigger('rendered:empty', collection);

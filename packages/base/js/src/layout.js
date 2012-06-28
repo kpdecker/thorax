@@ -9,8 +9,7 @@ var Layout = View.extend({
   render: function(output) {
     var response;
     //a template is optional in a layout
-    var name = getViewName.call(this, true);
-    if (output || this._template || (name && this.loadTemplate(name, {}, Thorax.registry))) {
+    if (output || this.template) {
       //but if present, it must have embedded an element containing layoutCidAttributeName 
       response = View.prototype.render.call(this, output);
       ensureLayoutViewsTargetElement.call(this);

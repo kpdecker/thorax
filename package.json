@@ -49,9 +49,9 @@
         "packages/base/js/src/view-controller.js",
         "packages/base/js/src/model.js",
         "packages/base/js/src/collection.js",
+        "packages/base/js/src/application.js",
         "packages/base/js/src/export.js",
         "packages/base/js/src/registry.js",
-        "packages/base/js/src/application.js",
         "packages/base/js/src/$.js",
         "packages/base/js/src/footer.js"
       ],
@@ -88,10 +88,12 @@
         "packages/base/js/src/view/events-builtin.js",
         "packages/base/js/src/view/scroll.js",
         "packages/phoenix/js/src/view/append-item.js",
+        "packages/phoenix/js/src/view/view.js",
         "packages/phoenix/js/src/view/collection.js",
         "packages/base/js/src/layout.js",
         "packages/base/js/src/model.js",
         "packages/base/js/src/collection.js",
+        "packages/phoenix/js/src/name.js",
         "packages/base/js/src/footer.js",
         "packages/loading/js/src/loading.js",
         "packages/form/js/src/form.js"

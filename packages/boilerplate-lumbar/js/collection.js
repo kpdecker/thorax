@@ -1,3 +1,3 @@
-_.extend(exports.Collection.prototype, {
+_.extend(Application.Collection.prototype, {
   
 });

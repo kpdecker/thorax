@@ -5,6 +5,7 @@ var View = function(options) {
   this.cid = _.uniqueId('view');
   _viewsIndexedByCid[this.cid] = this;
   this._boundCollectionsByCid = {};
+  this._views = {};
   this._partials = {};
   this._renderCount = 0;
   this._configure(options || {});
@@ -15,7 +16,24 @@ var View = function(options) {
   this.trigger('initialize:after', options);
 };
 
-View.extend = Backbone.View.extend;
+View.extend = function() {
+  var child = Backbone.View.extend.apply(this, arguments);
+  child.mixins = _.clone(this.mixins);
+  cloneEvents(this, child, 'events');
+  cloneEvents(this.events, child.events, 'model');
+  cloneEvents(this.events, child.events, 'collection');
+  return child;
+};
+
+function cloneEvents(source, target, key) {
+  source[key] = _.clone(target[key]);
+  //need to deep clone events array
+  _.each(source[key], function(value, _key) {
+    if (_.isArray(value)) {
+      target[key][_key] = _.clone(value);
+    }
+  });
+}
 
 _.extend(View.prototype, Backbone.View.prototype, {
   _configure: function(options) {
@@ -23,14 +41,14 @@ _.extend(View.prototype, Backbone.View.prototype, {
     //properties directly with the view and template context
     _.extend(this, options || {});
 
-    //compile a string or assign a function template if it is set as this.template
-    if (this.template !== renderTemplate) {
-      this._template = typeof this.template === 'string'
-        ? Handlebars.compile(this.template)
-        : this.template;
-      this.template = renderTemplate;
+    //compile a string if it is set as this.template
+    if (typeof this.template === 'string') {
+      this.template = Handlebars.compile(this.template);
+    } else if (this.name) {
+      //fetch the template 
+      this.template = Thorax.registry.template(this.name, null, true);
     }
-    
+        
     //will be called again by Backbone.View(), after _configure() is complete but safe to call twice
     this._ensureElement();
 
@@ -49,36 +67,12 @@ _.extend(View.prototype, Backbone.View.prototype, {
         applyMixin.call(this, this.mixins[i]);
       }
     }
-
-    //views
-    this._views = {};
-    if (this.views) {
-      for (var local_name in this.views) {
-        if (_.isArray(this.views[local_name])) {
-          this[local_name] = this.view.apply(this, this.views[local_name]);
-        } else {
-          this[local_name] = this.view(this.views[local_name]);
-        }
-      }
-    }
   },
 
   _ensureElement : function() {
     Backbone.View.prototype._ensureElement.call(this);
     (this.el[0] || this.el).setAttribute(viewNameAttributeName, this.name || this.cid);
     (this.el[0] || this.el).setAttribute(viewCidAttributeName, this.cid);      
-  },
-
-  view: function(name, options) {
-    if (typeof name === 'object' && name.hash && name.hash.name) {
-      // named parameters
-      options = name.hash;
-      name = name.hash.name;
-      delete options.name;
-    }
-    var instance = getView(name, options);
-    this._views[instance.cid] = instance;
-    return instance;
   },
 
   _shouldFetch: function(model_or_collection, options) {

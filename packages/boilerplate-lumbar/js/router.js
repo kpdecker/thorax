@@ -1,3 +1,3 @@
-_.extend(exports.Router.prototype, {
+_.extend(Application.Router.prototype, {
   
 });

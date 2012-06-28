@@ -1,3 +1,3 @@
-_.extend(exports.View.prototype, {
+_.extend(Application.View.prototype, {
   
 });

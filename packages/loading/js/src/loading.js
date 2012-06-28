@@ -1,7 +1,14 @@
 (function() {
 
 var loadStart = 'load:start',
-    loadEnd = 'load:end';
+    loadEnd = 'load:end',
+    rootObject;
+
+var $superInitialize = Thorax.Application.prototype.initialize;
+Thorax.Application.prototype.initialize = function() {
+  rootObject = this;
+  return $superInitialize.apply(this, arguments);
+};
 
 /**
  * load:start / load:end handler.
@@ -273,7 +280,7 @@ _.each([Thorax.Collection, Thorax.Model], function(DataClass) {
       if (!options.background && !this.isPopulated()) {
         // Make sure that the global scope sees the proper load events here
         // if we are loading in standalone mode
-        Thorax.forwardLoadEvents(this, exports, true);
+        Thorax.forwardLoadEvents(this, rootObject, true);
       }
 
       var self = this;
@@ -337,7 +344,7 @@ _.extend(Thorax.View.prototype, {
 
   onLoadStart: function(message, background, object) {
     if (!this.nonBlockingLoad && !background) {
-      exports.trigger(loadStart, message, background, object);
+      rootObject.trigger(loadStart, message, background, object);
     }
     $(this.el).addClass(this._loadingClassName);
     if (this._loadingCallbacks) {

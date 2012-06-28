@@ -15,5 +15,3 @@ _.extend(View.prototype, {
     return item.attributes;
   }
 });
-
-View.prototype.template = renderTemplate = View.prototype.renderTemplate;

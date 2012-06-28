@@ -1,3 +1,1 @@
-var Router = Backbone.Router.extend({
-  view: getView
-});
+var Router = Backbone.Router.extend({});

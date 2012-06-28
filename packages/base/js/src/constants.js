@@ -16,4 +16,3 @@ var handlebarsExtension = 'handlebars',
     //android scrollTo(0, 0) shows url bar, scrollTo(0, 1) hides it
     minimumScrollYOffset = (navigator.userAgent.toLowerCase().indexOf("android") > -1) ? 1 : 0,
     ELEMENT_NODE_TYPE = 1;
-    var renderTemplate;
