@@ -1,0 +1,16 @@
+{
+  "modules": {
+    "base": {
+      "scripts": [
+        {
+          "src": "js/lib/bootstrap.js"
+        }
+      ],
+      "styles": [
+        {
+          "src": "styles/bootstrap.css"
+        }
+      ]
+    }
+  }
+}
