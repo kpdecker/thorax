@@ -5,10 +5,4 @@ internalViewEvents['initialize:after'] = function(options) {
   }
 };
 
-internalViewEvents['click [' + callMethodAttributeName + ']'] = function(event) {
-  var target = $(event.target);
-  event.preventDefault();
-  this[target.attr(callMethodAttributeName)].call(this, event);
-};
-
 View.registerEvents(internalViewEvents);

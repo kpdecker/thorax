@@ -82,7 +82,7 @@ Application.prototype.template = Thorax.registry.template;
 
 Thorax.addModuleMethods = function(module, application) {
   module.router = function(protoProps) {
-    var router = application.router(module.name);
+    var router = Thorax.registry.router(module.name, null, true);
     if (arguments.length === 0) {
       return router;
     }

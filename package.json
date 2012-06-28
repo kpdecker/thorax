@@ -72,34 +72,6 @@
       ],
       "target": "public/builds/base/js/lib/thorax.form.js"
     },
-    "phoenix": {
-      "sources": [
-        "packages/base/js/src/header.js",
-        "packages/base/js/src/constants.js",
-        "packages/base/js/src/util.js",
-        "packages/phoenix/js/src/configure.js",
-        "packages/base/js/src/view.js",
-        "packages/base/js/src/view/mixin.js",
-        "packages/base/js/src/view/events.js",
-        "packages/base/js/src/view/model.js",
-        "packages/base/js/src/view/render.js",
-        "packages/base/js/src/view/helpers.js",
-        "packages/base/js/src/view/helpers/view.js",
-        "packages/base/js/src/view/events-builtin.js",
-        "packages/base/js/src/view/scroll.js",
-        "packages/phoenix/js/src/view/append-item.js",
-        "packages/phoenix/js/src/view/view.js",
-        "packages/phoenix/js/src/view/collection.js",
-        "packages/base/js/src/layout.js",
-        "packages/base/js/src/model.js",
-        "packages/base/js/src/collection.js",
-        "packages/phoenix/js/src/name.js",
-        "packages/base/js/src/footer.js",
-        "packages/loading/js/src/loading.js",
-        "packages/form/js/src/form.js"
-      ],
-      "target": "public/builds/phoenix/thorax.js"
-    },
     "boilerplate-html": {
       "directories": {
         "packages/boilerplate-html": "",
@@ -124,7 +96,7 @@
         "packages/loading/templates": "templates"
       }
     },
-    "hello-world-lumbar": {
+    "hello-lumbar": {
       "builds": ["boilerplate-lumbar"],
       "directories": {
         "packages/hello-world": "",

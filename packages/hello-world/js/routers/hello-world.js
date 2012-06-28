@@ -1,8 +1,5 @@
-Application.Router.extend({
-  name: module.name,
-  routes: module.routes,
+module.router({
   index: function() {
-    var view = this.view('hello-world/index');
-    Application.setView(view);
+    Application.setView('hello-world/index');
   }
 });

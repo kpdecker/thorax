@@ -90,11 +90,49 @@ View.registerHelper('template', function(name, options) {
   return new Handlebars.SafeString(output);
 });
 
-View.registerHelper('url', function(url) {
-  return (Backbone.history._hasPushState ? Backbone.history.options.root : '#') + url;
-});
-
 View.registerHelper('layout', function(options) {
   options.hash[layoutCidAttributeName] = this._view.cid;
   return new Handlebars.SafeString(View.tag.call(this, options.hash, null, this));
 });
+
+var paramMatcher = /:(\w+)/g;
+View.registerHelper('url', function(url) {
+  var matches = url.match(paramMatcher),
+      context = this;
+  if (matches) {
+    url = url.replace(paramMatcher, function(match, key) {
+      return context[key] ? getValue(context, key) : match;
+    });
+  }
+  url = View.expandToken(url, context);
+  return (Backbone.history._hasPushState ? Backbone.history.options.root : '#') + url;
+});
+
+View.registerHelper('button', function(method, options) {
+  options.hash.tag = 'button';
+  options.hash[callMethodAttributeName] = method;
+  return new Handlebars.SafeString(View.tag.call(this, options.hash, options.fn, this));
+});
+
+View.registerHelper('link', function(url, options) {
+  options.hash.tag = 'a';
+  options.hash.href = Handlebars.helper.url.call(this, url);
+  options.hash[callMethodAttributeName] = '_anchorClick';
+  return new Handlebars.SafeString(View.tag.call(this, options.hash, options.fn, this));
+});
+
+internalViewEvents['click [' + callMethodAttributeName + ']'] = function(event) {
+  this[$(event.target).attr(callMethodAttributeName)].call(this, event);
+};
+
+View.prototype._anchorClick = function(event) {
+  var target = $(event.currentTarget),
+      href = target.attr('href');
+  // Route anything that starts with # or / (excluding //domain urls)
+  if (href && (href[0] === '#' || (href[0] === '/' && href[1] !== '/'))) {
+    Backbone.history.navigate(href, {
+      trigger: true
+    });
+    event.preventDefault();
+  }
+};

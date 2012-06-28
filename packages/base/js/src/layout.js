@@ -1,10 +1,5 @@
 var Layout = View.extend({
   destroyViews: true,
-  _ensureElement : function() {
-    Backbone.View.prototype._ensureElement.call(this);
-    //need real event delegation, do not contain to current view
-    this.$el.delegate('a', 'click', _.bind(this.anchorClick, this));
-  },
 
   render: function(output) {
     var response;
@@ -21,7 +16,10 @@ var Layout = View.extend({
     return response;
   },
 
-  setView: function(view, params){
+  setView: function(view){
+    if (typeof view === 'string') {
+      view = new (Thorax.registry.view(view));
+    }
     ensureRendered.call(this);
     var old_view = this._view;
     if (view == old_view){
@@ -29,7 +27,7 @@ var Layout = View.extend({
     }
     this.trigger('change:view:start', view, old_view);
     old_view && old_view.trigger('deactivated');
-    view && view.trigger('activated', params || {});
+    view && view.trigger('activated');
     if (old_view && old_view.el && old_view.el.parentNode) {
       old_view.$el.remove();
     }
@@ -46,23 +44,6 @@ var Layout = View.extend({
 
   getView: function() {
     return this._view;
-  },
-
-  anchorClick: function(event) {
-    var target = $(event.currentTarget);
-    if (target.attr("data-external")) {
-      return;
-    }
-    //ensure nested layouts only trigger the behavior once
-    var containing_view_element = target.closest('[' + layoutCidAttributeName + ']');
-    if (!containing_view_element.length || containing_view_element[0].getAttribute(layoutCidAttributeName) == this.cid) {
-      var href = target.attr("href");
-      // Route anything that starts with # or / (excluding //domain urls)
-      if (href && (href[0] === '#' || (href[0] === '/' && href[1] !== '/'))) {
-        Backbone.history.navigate(href, {trigger: true});
-        event.preventDefault();
-      }
-    }
   }
 });
 

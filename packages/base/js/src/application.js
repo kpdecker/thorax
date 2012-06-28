@@ -1,5 +1,9 @@
 var Application = Layout.extend({
+  name: 'application',
   initialize: function(options) {
+    //ensure backbone history has started
+    Backbone.history || (Backbone.history = new Backbone.History);
+
     //"template" method has special meaning on application object
     //as it is a registry provider
     if (this.template != Application.prototype.template) {
@@ -10,10 +14,8 @@ var Application = Layout.extend({
       }
     }
     this.template = Application.prototype.template;
-    _.extend(this, options || {});
-    //ensure backbone history has started
-    Backbone.history || (Backbone.history = new Backbone.History);
-    _.extend(this, {
+
+    _.extend(this, options || {}, {
       Layout: Layout.extend({}),
       View: View.extend({}),
       Model: Model.extend({}),
@@ -22,9 +24,17 @@ var Application = Layout.extend({
       ViewController: ViewController.extend({})
     });
   },
+  //model also has special meaning to the Application object
+  //don't bind it as it is the registry function
+  setModel:function(){},
   render: function(output) {
-    //if (!output && )
-    ++this._renderCount;
+    if (output || this._template) {
+      return Layout.prototype.render.call(this, output || this._template);
+    } else {
+      ++this._renderCount;
+      //set the layoutCidAttributeName on this.$el if there was no template
+      this.$el.attr(layoutCidAttributeName, this.cid);
+    }
   },
   start: function(options) {
     this.render();

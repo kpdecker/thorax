@@ -192,7 +192,7 @@ generator = new Application.View
       method = if method.match(/\-/) then '"' + method + '"' else method
       output = "  #{method}: function(#{signature || ''}) {\n"
       if viewsToCreate.indexOf method isnt -1
-        output += "    var view = this.view('#{moduleName}/#{method}');\n"
+        output += "    var view = new (Application.view('#{moduleName}/#{method}'));\n"
         output += "    Application.setView(view);\n"
       output += "  }"
       output
@@ -200,25 +200,22 @@ generator = new Application.View
 
   templates:
     collection: Handlebars.compile """
-      Application.Collection.extend({
-        name: "{{name}}"
+      Application.collection('{{name}}', {
+
       });
     """
     model: Handlebars.compile """
-      Application.Model.extend({
-        name: "{{name}}"
+      Application.model('{{name}}', {
+
       });
     """
     router: Handlebars.compile """
-      Application.Router.extend({
-        name: module.name,
-        routes: module.routes,
+      module.router({
       {{{methods}}}
       });
     """
     view: Handlebars.compile """
-      Application.View.extend({
-        name: "{{name}}",
+      Application.view('{{name}}', {
         events: {
           
         }
@@ -226,8 +223,7 @@ generator = new Application.View
     """
     lib: Handlebars.compile ""
 
-Application.View.extend
-  name: 'text-editor'
+Application.view 'text-editor'
   config:
     tabSize: 2
     fontSize: 14
@@ -257,8 +253,7 @@ Application.View.extend
     <pre></pre>
   """
 
-MainView = Application.View.extend
-  name: 'main'
+MainView = Application.view 'main'
   events:
     'change select.editor': (event) ->
       Application.editor = $(event.target).val()
@@ -276,14 +271,14 @@ MainView = Application.View.extend
   openApplication: ->
     @$('.view-application').show()
     @$('.view-editor').hide()
-    @applicationWindow = @view 'application-window'
+    @applicationWindow = new (Application.view 'application-window')
     @frame.setView @applicationWindow
   openEditor: (file) ->
     @$('.view-editor').show()
     @$('.view-application').hide()
     @$('.view-editor .navbar-text').html file
     $.get "#{prefix}/file?path=#{file}", (content) =>
-      @editorView = @view 'text-editor', file: file, text: content
+      @editorView = new Application.view('text-editor')(file: file, text: content)
       @frame.setView @editorView
       @editorView.edit()
   closeEditor: (event) ->
@@ -359,8 +354,7 @@ openFile = (path) ->
 saveFile = (path, content, callback) ->
   $.post "#{prefix}/file?path=#{path}", content: content, callback
 
-Application.View.extend
-  name: 'module-menu'
+Application.view 'module-menu'
   tagName: 'li'
   attributes: ->
     class: 'dropdown'
@@ -422,8 +416,7 @@ Application.View.extend
     </ul>
   """
 
-Application.View.extend
-  name: 'file-menu-item'
+Application.view 'file-menu-item'
   tagName: 'li'
   events:
     'click li a': editOrCreate
@@ -438,11 +431,10 @@ Application.View.extend
 
 inspectorIsVisible = false
 
-Application.View.extend
+Application.view 'application-window'
   tagName: 'iframe'
   attributes:
     src: '/'
-  name: 'application-window'
   template: ""
   getWindow: ->
     @$el[0].contentWindow
@@ -467,8 +459,7 @@ Application.View.extend
     el = @getWindow().$('[data-view-cid]')
     el[if active then 'on' else 'off'] 'click', @boundViewClick
 
-InspectorModal = Application.View.extend
-  name: 'inspector-popover'
+InspectorModal = Application.view 'inspector-popover'
   events:
     destroyed: ->
       inspectorIsVisible = false
@@ -531,8 +522,7 @@ InspectorModal = Application.View.extend
     </div>
   """
 
-EditRoutesModal = Application.View.extend
-  name: 'edit-routes-modal'
+EditRoutesModal = Application.view 'edit-routes-modal'
   events:
     'submit form': (event) ->
       @serialize event, (attributes, release) =>
@@ -603,8 +593,7 @@ EditRoutesModal = Application.View.extend
     </div>
   """
 
-CreateModuleModal = Application.View.extend
-  name: 'create-module-modal'
+CreateModuleModal = Application.view 'create-module-modal'
   events:
     'submit form': (event) ->
       @serialize event, (attributes, release) =>

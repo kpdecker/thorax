@@ -830,45 +830,28 @@ $(function() {
     equal(bEventCounter.destroyed, 1);
   });
 
-  test("nested layouts", function() {
-    var application = new Thorax.Application;
-    var linkView = application.View.extend({
-      template: '<a href="#index">index</a>'
+  test("Application can have template", function() {
+    var a = new Thorax.Application({
+      template: '<div class="outer">{{layout}}</div>'
     });
-    var view = new application.View({
-      template: '{{view layoutView}}{{view linkView}}',
-      initialize: function() {
-        this.layoutView = new application.Layout;
-        this.nestedLinkView = new linkView;
-        this.layoutView.setView(this.nestedLinkView);
-        this.linkView = new linkView;
-      }
-    });
-    application.setView(view);
-    document.body.appendChild(application.el);
-    var callCount = 0;
-    var router = new (application.Router.extend({
-      routes: {
-        'index': 'index'
-      },
-      index: function() {
-        ++callCount;
-      }
+    a.render();
+    equal(a.$('.inner').length, 0);
+    a.setView(new Thorax.View({
+      template: '<div class="inner"></div>'
     }));
-    Backbone.history.navigate('', {trigger: false});
-    equal(callCount, 0);
-    var outerLink = view.$('a')[0];
-    var click = $.Event('click');
-    click.currentTarget = outerLink;
-    $(outerLink).trigger(click);
-    equal(callCount, 1);
-    Backbone.history.navigate('', {trigger: false});
-    var innerLink = view.nestedLinkView.$('a')[0];
-    click = $.Event('click');
-    click.currentTarget = innerLink;
-    $(innerLink).trigger(click);
-    equal(callCount, 2);
-    document.body.removeChild(application.el);
+    equal(a.$('.outer').length, 1);
+    equal(a.$('.inner').length, 1);
+
+    Thorax.registry.template('application', '<div class="outer">{{layout}}</div>');
+    var b = new Thorax.Application();
+    b.render();
+    equal(b.$('.inner').length, 0);
+    b.setView(new Thorax.View({
+      template: '<div class="inner"></div>'
+    }));
+    equal(b.$('.outer').length, 1);
+    equal(b.$('.inner').length, 1);
+    delete Thorax.registry.templates.application;
   });
 
   test('layouts with templates and {{layout}}', function() {
@@ -941,6 +924,36 @@ $(function() {
 
     equal(Application.template('test-a')({key:'value'}), '<p>value</p>', 'will compile a string to a template');
     equal(Application.template('test-b')({key:'value'}), '<p>value</p>', 'will accept a template function');
+  });
+
+  test("url helper", function() {
+    var view = new Application.View({
+      template: '<a href="{{url "/a/:b"}}"></a>'
+    });
+    view.render();
+    equal(view.$('a').attr('href'), '#/a/:b');
+    view.b = 'b';
+    view.render();
+    equal(view.$('a').attr('href'), '#/a/b');
+    view.b = false;
+    view.setModel(new Application.Model({
+      b: 'c'
+    }));
+    equal(view.$('a').attr('href'), '#/a/c');
+
+    var view = new Application.View({
+      template: '<a href="{{url "/a/{{b}}"}}"></a>'
+    });
+    view.render();
+    equal(view.$('a').attr('href'), '#/a/');
+    view.b = 'b';
+    view.render();
+    equal(view.$('a').attr('href'), '#/a/b');
+    view.b = false;
+    view.setModel(new Application.Model({
+      b: 'c'
+    }));
+    equal(view.$('a').attr('href'), '#/a/c');
   });
 
   test("$.fn.view, $.fn.model, $.fn.collection", function() {

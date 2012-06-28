@@ -74,7 +74,11 @@
       ]
     }
   },
-  "templates": {},
+  "templates": {
+    "js/init.js": [
+      "templates/application.handlebars"
+    ]
+  },
   "styles": {
     "pixelDensity": {
       "web": [

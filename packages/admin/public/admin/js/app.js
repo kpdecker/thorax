@@ -304,7 +304,7 @@
         method = method.match(/\-/) ? '"' + method + '"' : method;
         output = "  " + method + ": function(" + (signature || '') + ") {\n";
         if (viewsToCreate.indexOf(method !== -1)) {
-          output += "    var view = this.view('" + moduleName + "/" + method + "');\n";
+          output += "    var view = new (Application.view('" + moduleName + "/" + method + "'));\n";
           output += "    Application.setView(view);\n";
         }
         output += "  }";
@@ -313,16 +313,15 @@
       return methods.join(",\n");
     },
     templates: {
-      collection: Handlebars.compile("Application.Collection.extend({\n  name: \"{{name}}\"\n});"),
-      model: Handlebars.compile("Application.Model.extend({\n  name: \"{{name}}\"\n});"),
-      router: Handlebars.compile("Application.Router.extend({\n  name: module.name,\n  routes: module.routes,\n{{{methods}}}\n});"),
-      view: Handlebars.compile("Application.View.extend({\n  name: \"{{name}}\",\n  events: {\n    \n  }\n});"),
+      collection: Handlebars.compile("Application.collection('{{name}}', {\n\n});"),
+      model: Handlebars.compile("Application.model('{{name}}', {\n\n});"),
+      router: Handlebars.compile("module.router({\n{{{methods}}}\n});"),
+      view: Handlebars.compile("Application.view('{{name}}', {\n  events: {\n    \n  }\n});"),
       lib: Handlebars.compile("")
     }
   });
 
-  Application.View.extend({
-    name: 'text-editor',
+  Application.view('text-editor', {
     config: {
       tabSize: 2,
       fontSize: 14
@@ -359,8 +358,7 @@
     template: "<pre></pre>"
   });
 
-  MainView = Application.View.extend({
-    name: 'main',
+  MainView = Application.view('main', {
     events: {
       'change select.editor': function(event) {
         Application.editor = $(event.target).val();
@@ -392,7 +390,7 @@
     openApplication: function() {
       this.$('.view-application').show();
       this.$('.view-editor').hide();
-      this.applicationWindow = this.view('application-window');
+      this.applicationWindow = new (Application.view('application-window'));
       return this.frame.setView(this.applicationWindow);
     },
     openEditor: function(file) {
@@ -401,7 +399,7 @@
       this.$('.view-application').hide();
       this.$('.view-editor .navbar-text').html(file);
       return $.get("" + prefix + "/file?path=" + file, function(content) {
-        _this.editorView = _this.view('text-editor', {
+        _this.editorView = new Application.view('text-editor')({
           file: file,
           text: content
         });
@@ -479,8 +477,7 @@
     }, callback);
   };
 
-  Application.View.extend({
-    name: 'module-menu',
+  Application.view('module-menu', {
     tagName: 'li',
     attributes: function() {
       return {
@@ -503,8 +500,7 @@
     template: "<a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\">{{name}} <b class=\"caret\"></b></a>\n<ul class=\"dropdown-menu\">\n  {{#if routerUrl}}\n    <li class=\"nav-header\">Routes</li>\n    <li><a href=\"#\" data-edit-module-routes=\"{{name}}\">Edit Routes</a></li>\n    <li><a href=\"{{routerUrl}}\">Router - {{relative-path name \"routers\" routerUrl}}</a></li>\n  {{/if}}\n  {{^empty views}}\n    <li class=\"divider\"></li>\n    <li class=\"nav-header\">Views</li>\n  {{/empty}}\n  {{collection views item-view=\"file-menu-item\"}}\n  {{^empty models}}\n    <li class=\"divider\"></li>\n    <li class=\"nav-header\">Models</li>\n  {{/empty}}\n  {{#collection models tag=\"li\"}}\n    <a href=\"{{raw.src}}\">{{relative-path name \"models\" raw.src}}</a>\n  {{/collection}}\n  {{^empty collections}}\n    <li class=\"divider\"></li>\n    <li class=\"nav-header\">Collections</li>\n  {{/empty}}\n  {{#collection collections tag=\"li\"}}\n    <a href=\"{{raw.src}}\">{{relative-path name \"collections\" raw.src}}</a>\n  {{/collection}}\n  {{^empty lib}}\n    <li class=\"divider\"></li>\n    <li class=\"nav-header\">Libraries</li>\n  {{/empty}}\n  {{#collection lib tag=\"li\"}}\n    <a href=\"{{raw.src}}\">{{relative-path name \"lib\" raw.src}}</a>\n  {{/collection}}\n  {{^empty styles}}\n    <li class=\"divider\"></li>\n    <li class=\"nav-header\">Styles</li>\n  {{/empty}}\n  {{#collection styles tag=\"li\"}}\n    <a href=\"{{raw.src}}\">{{relative-path name \"lib\" raw.src}}</a>\n  {{/collection}}\n  <li class=\"divider\"></li>\n  <li class=\"nav-header\">Create</li>\n  <li><a href=\"#\" data-create-type=\"view\">View</a></li>\n  <li><a href=\"#\" data-create-type=\"model\">Model</a></li>\n  <li><a href=\"#\" data-create-type=\"collection\">Collection</a></li>\n  <li><a href=\"#\" data-create-type=\"lib\">Library</a></li>\n</ul>"
   });
 
-  Application.View.extend({
-    name: 'file-menu-item',
+  Application.view('file-menu-item', {
     tagName: 'li',
     events: {
       'click li a': editOrCreate
@@ -514,12 +510,11 @@
 
   inspectorIsVisible = false;
 
-  Application.View.extend({
+  Application.view('application-window', {
     tagName: 'iframe',
     attributes: {
       src: '/'
     },
-    name: 'application-window',
     template: "",
     getWindow: function() {
       return this.$el[0].contentWindow;
@@ -556,8 +551,7 @@
     }
   });
 
-  InspectorModal = Application.View.extend({
-    name: 'inspector-popover',
+  InspectorModal = Application.view('inspector-popover', {
     events: {
       destroyed: function() {
         return inspectorIsVisible = false;
@@ -617,8 +611,7 @@
     template: "<div class=\"modal\">\n  <div class=\"modal-header\">\n    <h3>Inspector</h3>\n  </div>\n  <div class=\"modal-body\">\n    {{#if closestView}}\n      <p><strong>View:</strong> {{closestView}} <button class=\"btn\" data-call-method=\"editView\">Edit</button></p>\n    {{/if}}\n    {{#if closestTemplate}}\n      <p><strong>Template:</strong> {{closestTemplate}} <button class=\"btn\" data-call-method=\"editTemplate\">Edit</button></p>\n    {{/if}}\n    {{#if closestModel}}\n      <p><strong>Model:</strong> {{closestModel}} <button class=\"btn\" data-call-method=\"editModel\">Edit</button></p>\n    {{/if}}\n    {{#if closestCollection}}\n      <p><strong>Collection:</strong> {{closestCollection}} <button class=\"btn\" data-call-method=\"editCollection\">Edit</button></p>\n    {{/if}}\n  </div>\n  <div class=\"modal-footer\">\n    <input type=\"submit\" class=\"btn btn-primary\" data-dismiss=\"modal\" value=\"Close\">\n  </div>\n</div>"
   });
 
-  EditRoutesModal = Application.View.extend({
-    name: 'edit-routes-modal',
+  EditRoutesModal = Application.view('edit-routes-modal', {
     events: {
       'submit form': function(event) {
         var _this = this;
@@ -678,8 +671,7 @@
     template: "<div class=\"modal\">\n  <form class=\"form-vertical\">\n    <div class=\"modal-header\">\n      <h3>Edit \"{{name}}\" Routes</h3>\n    </div>\n    <div class=\"modal-body\">\n      <table class=\"table table-bordered table-striped table-condensed\">\n        <thead>\n          <tr>\n            <th>Route</th>\n            <th>Method</th>\n            <th></th>\n            <th></th>\n          </tr>\n        </thead>\n        {{#collection routes tag=\"tbody\"}}\n          <tr>\n            <td><input type=\"text\" id=\"route-{{cid}}\" name=\"route[{{cid}}][path]\" value=\"{{route}}\"></td>\n            <td><input type=\"text\" id=\"method-{{cid}}\" name=\"route[{{cid}}][method]\" value=\"{{method}}\"></td>\n            <td><button class=\"btn btn-mini\" data-call-method=\"visitRoute\">Visit</button></td>\n            <td><button class=\"btn btn-danger btn-mini\" data-call-method=\"removeRoute\">Remove</button></td>\n          </tr>\n        {{else}}\n          <tr>\n            <td colspan=\"4\">No Routes</td>\n          </tr>\n        {{/collection}}\n      </table>\n      <button class=\"btn btn-success\" data-call-method=\"createRoute\">Create Route</button>\n    </div>\n    <div class=\"modal-footer\">\n      <input type=\"button\" class=\"btn\" data-dismiss=\"modal\" value=\"Close\">\n      <input type=\"submit\" class=\"btn btn-primary\" value=\"Save Changes\">\n    </div>\n  </form>\n</div>"
   });
 
-  CreateModuleModal = Application.View.extend({
-    name: 'create-module-modal',
+  CreateModuleModal = Application.view('create-module-modal', {
     events: {
       'submit form': function(event) {
         var _this = this;

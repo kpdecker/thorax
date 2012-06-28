@@ -1,7 +1,7 @@
 _.extend(View.prototype, {
   render: function(output) {
     destroyPartials.call(this);
-    if (typeof output === 'undefined' || (!_.isElement(output) && !is$(output) && !(output && output.el) && typeof output !== 'string')) {
+    if (typeof output === 'undefined' || (!_.isElement(output) && !is$(output) && !(output && output.el) && typeof output !== 'string' && typeof output !== 'function')) {
       if (!this.template) {
         throw new Error('View ' + (this.name || this.cid) + '.render() was called with no content and no template set on the view.');
       }
