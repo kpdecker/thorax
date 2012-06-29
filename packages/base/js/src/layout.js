@@ -21,24 +21,27 @@ var Layout = View.extend({
       view = new (Thorax.registry.view(view));
     }
     ensureRendered.call(this);
-    var old_view = this._view;
-    if (view == old_view){
+    var oldView = this._view;
+    if (view == oldView){
       return false;
     }
-    this.trigger('change:view:start', view, old_view);
-    old_view && old_view.trigger('deactivated');
+    this.trigger('change:view:start', view, oldView);
+    oldView && oldView.trigger('deactivated');
     view && view.trigger('activated');
-    if (old_view && old_view.el && old_view.el.parentNode) {
-      old_view.$el.remove();
+    if (oldView && oldView.el && oldView.el.parentNode) {
+      oldView.$el.remove();
     }
     //make sure the view has been rendered at least once
     view && ensureRendered.call(view);
     view && getLayoutViewsTargetElement.call(this).appendChild(view.el);
     window.scrollTo(0, minimumScrollYOffset);
     this._view = view;
-    this.destroyViews && old_view && old_view.destroy();
+    //ensure oldView is not a ViewController 
+    if (this.destroyViews && oldView && !oldView.routes && !oldView.navigate) {
+      oldView.destroy();
+    }
     this._view && this._view.trigger('ready');
-    this.trigger('change:view:end', view, old_view);
+    this.trigger('change:view:end', view, oldView);
     return view;
   },
 
