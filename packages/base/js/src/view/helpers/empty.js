@@ -42,7 +42,7 @@ View.registerPartialHelper('empty', function(collection, partial) {
     collection.on('add', collectionAddCallback);
     collection.on('reset', collectionResetCallback);
 
-    partial.bind('freeze', function() {
+    partial.on('freeze', function() {
       collection.off('remove', collectionRemoveCallback);
       collection.off('add', collectionAddCallback);
       collection.off('reset', collectionResetCallback);

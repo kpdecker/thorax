@@ -29,7 +29,7 @@ _.extend(View.prototype, {
   //- handler
   _addEvent: function(params) {
     if (params.type === 'view') {
-      this.bind(params.name, params.handler, this);
+      this.on(params.name, params.handler, this);
     } else {
       var boundHandler = containHandlerToCurentView(bindEventHandler.call(this, params.handler), this.cid);
       if (params.selector) {
@@ -43,7 +43,7 @@ _.extend(View.prototype, {
           this.$el.delegate(params.selector, params.name, boundHandler);
         }
       } else {
-        this.$el.bind(params.name, boundHandler);
+        this.$el.on(params.name, boundHandler);
       }
     }
   },
@@ -51,7 +51,7 @@ _.extend(View.prototype, {
   freeze: function(model) {
     if (this.model && (model === this.model || !model)) {
       this._events.model.forEach(function(event) {
-        this.model.unbind(event[0], event[1]);
+        this.model.off(event[0], event[1]);
       }, this);
     }
     if (!model) {

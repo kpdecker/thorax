@@ -28,7 +28,7 @@ _.extend(View.prototype, {
       this.setModelOptions(options);
 
       this._events.model.forEach(function(event) {
-        this.model.bind(event[0], event[1]);
+        this.model.on(event[0], event[1]);
       }, this);
 
       this.model.trigger('set', this.model, old_model);

@@ -107,10 +107,7 @@ _.extend(View.prototype, Backbone.View.prototype, {
   destroy: function() {
     this.freeze();
     this.trigger('destroyed');
-    if (this.undelegateEvents) {
-      this.undelegateEvents();
-    }
-    this.unbind();
+    this.off();
     this._events = {};
     this._boundCollectionsByCid = {};
     this.el = null;
