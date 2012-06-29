@@ -54,6 +54,12 @@ var Layout = View.extend({
   }
 });
 
+function ensureLayoutCid() {
+  ++this._renderCount;
+  //set the layoutCidAttributeName on this.$el if there was no template
+  this.$el.attr(layoutCidAttributeName, this.cid);
+}
+
 function ensureLayoutViewsTargetElement() {
   if (!this.$('[' + layoutCidAttributeName + '="' + this.cid + '"]')[0]) {
     throw new Error();
