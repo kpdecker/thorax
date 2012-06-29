@@ -27,19 +27,7 @@ var Application = Layout.extend({
   //model also has special meaning to the Application object
   //don't bind it as it is the registry function
   setModel:function(){},
-  render: function(output) {
-    //TODO: fixme, lumbar inserts templates after JS, most of the time this is fine
-    //but Application will be created in init.js (unlike most views)
-    //so need to put this here so the template will be picked up
-    var applicationTemplate = Thorax.registry.template(this.name, null, true);
-    if (output || this._template || applicationTemplate) {
-      return Layout.prototype.render.call(this, output || this._template || applicationTemplate);
-    } else {
-      ++this._renderCount;
-      //set the layoutCidAttributeName on this.$el if there was no template
-      this.$el.attr(layoutCidAttributeName, this.cid);
-    }
-  },
+  render: generateRenderLayout('_template'),
   start: function(options) {
     this.render();
     if (!Backbone.History.started) {
