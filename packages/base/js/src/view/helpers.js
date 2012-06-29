@@ -1,7 +1,6 @@
 _.extend(View, {
   registerHelper: function(name, callback) {
-    this[name] = callback;
-    Handlebars.registerHelper(name, this[name]);
+    Handlebars.registerHelper(name, callback);
     return callback;
   },
   expandToken: function(input, scope) {

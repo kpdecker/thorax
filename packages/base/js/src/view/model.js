@@ -41,13 +41,17 @@ _.extend(View.prototype, {
         //without triggering event on model
         this._onModelChange();
       }
+    } else {
+      this._modelOptions = false;
+      this.model = false;
+      this._onModelChange();
     }
 
     return this;
   },
 
   _onModelChange: function() {
-    if (this._modelOptions.render) {
+    if (this._modelOptions && this._modelOptions.render) {
       this.render();
     }
   },

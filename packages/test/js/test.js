@@ -944,6 +944,9 @@ $(function() {
       b: 'c'
     }));
     equal(view.$('a').attr('href'), '#/a/c');
+    view.setModel(false);
+    view.render();
+    equal(view.$('a').attr('href'), '#/a/:b');
 
     var view = new Application.View({
       template: '<a href="{{url "/a/{{b}}"}}"></a>'
