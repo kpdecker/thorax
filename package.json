@@ -55,14 +55,14 @@
         "packages/base/js/src/$.js",
         "packages/base/js/src/footer.js"
       ],
-      "target": "public/builds/base/js/lib/thorax.js"
+      "target": "builds/base/js/lib/thorax.js"
     },
     "thorax.loading": {
       "sources": [
         "packages/loading/js/src/loading.js",
         "packages/loading/js/src/helpers.js"
       ],
-      "target": "public/builds/base/js/lib/thorax.loading.js"
+      "target": "builds/base/js/lib/thorax.loading.js"
     },
     "thorax.form": {
       "sources": [
@@ -70,13 +70,13 @@
         "packages/form/js/src/validation.js",
         "packages/form/js/src/helpers.js"
       ],
-      "target": "public/builds/base/js/lib/thorax.form.js"
+      "target": "builds/base/js/lib/thorax.form.js"
     },
     "boilerplate-html": {
       "directories": {
         "packages/boilerplate-html": "",
         "packages/base/js/lib": "js/lib",
-        "public/builds/base/js/lib": "js/lib",
+        "builds/base/js/lib": "js/lib",
         "packages/bootstrap": ""
       }
     },
@@ -89,7 +89,7 @@
       },
       "directories": {
         "packages/boilerplate-lumbar": "",
-        "public/builds/base/js/lib": "js/lib",
+        "builds/base/js/lib": "js/lib",
         "packages/base/js/lib": "js/lib",
         "packages/bootstrap": "",
         "packages/loading/js/views": "js/views",
@@ -102,8 +102,8 @@
       "directories": {
         "packages/hello-world": "",
         "packages/admin": "",
-        "packages/base/js/lib": "public/admin/js/lib",
-        "public/builds/base/js/lib": "public/admin/js/lib"
+        "packages/base/js/lib": "admin/js/lib",
+        "builds/base/js/lib": "admin/js/lib"
       }
     },
     "docs": {
@@ -117,7 +117,7 @@
     "test": {
       "directories": {
         "packages/base/js/lib": "js/lib",
-        "public/builds/base/js/lib": "js/lib",
+        "builds/base/js/lib": "js/lib",
         "packages/test": "",
         "packages/base/js/lib": "js/lib"
       }

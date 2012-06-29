@@ -112,7 +112,7 @@ function buildAllPackages() {
     }), function(item, next) {
       var build = item.build;
       var name = item.name;
-      var targetDirectory = path.join(__dirname, '..', 'public', 'builds', name);
+      var targetDirectory = path.join(__dirname, '..', 'builds', name);
       execute(['rm -rf ' + targetDirectory], function() {
         mkdirp(targetDirectory, function() {
           buildPackage(name, targetDirectory, function() {
