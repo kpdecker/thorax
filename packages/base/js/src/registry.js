@@ -81,7 +81,7 @@ _.each({
       }
     }
   };
-});
+}, this);
 
 Application.prototype.template = Thorax.registry.template;
 

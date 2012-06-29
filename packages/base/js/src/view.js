@@ -22,7 +22,25 @@ View.extend = function() {
   cloneEvents(this, child, 'events');
   cloneEvents(this.events, child.events, 'model');
   cloneEvents(this.events, child.events, 'collection');
+  child.instance = (function() {
+    var instance;
+    return function(options) {
+      if (!instance) {
+        instance = new child(options);
+      } else if (options) {
+        _.extend(instance, options);
+        if (options.model) {
+          instance.setModel(model);
+        }
+      }
+      return instance;
+    };
+  })();
   return child;
+};
+
+View.create = function(options) {
+  return new this(options);
 };
 
 function cloneEvents(source, target, key) {

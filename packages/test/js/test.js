@@ -21,10 +21,22 @@ $(function() {
 
   var LetterEmptyView = Application.view('letter-empty', {});
 
+  test("create() and instance()", function() {
+    var klass = Application.Model.extend({});
+    ok(klass.create().cid);
+    var instance = klass.instance({
+      key: 'value'
+    });
+    equal(instance, klass.instance());
+    equal(klass.instance().attributes.key, 'value');
+    equal(klass.instance({key:'value2'}).attributes.key, 'value2');
+  });
+
   test("isPopulated()", function() {
     ok(letterCollection.isPopulated());
     ok(letterCollection.at(0).isPopulated());
   });
+
   test("_shouldFetch", function() {
     var options = {fetch: true};
     var view = new Application.View();

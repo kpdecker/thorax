@@ -15,4 +15,24 @@ var Model = Backbone.Model.extend({
     var keys = _.keys(attributes);
     return keys.length > 1 || (keys.length === 1 && keys[0] !== 'id');
   }
+}, {
+  create: function(options) {
+    return new this(options);
+  }
 });
+
+Model.extend = function() {
+  var child = Backbone.Model.extend.apply(this, arguments);
+  child.instance = (function() {
+    var instance;
+    return function(options) {
+      if (!instance) {
+        instance = new child(options);
+      } else if (options) {
+        instance.set(options);
+      }
+      return instance;
+    };
+  })();
+  return child;
+};

@@ -23,4 +23,29 @@ var Collection = Backbone.Collection.extend({
     this._fetched = !!models;
     return Backbone.Collection.prototype.reset.call(this, models, options);
   }
+}, {
+  create: function(models, options) {
+    return new this(models, options);
+  }
 });
+
+Collection.extend = function() {
+  var child = Backbone.Collection.extend.apply(this, arguments);
+  child.instance = (function() {
+    var instance;
+    return function(models, options) {
+      if (!instance) {
+        instance = new child(models, options);
+      } else {
+        if (models) {
+          instance.reset(models);
+        }
+        if (options) {
+          _.extend(instance, options);
+        }
+      }
+      return instance;
+    };
+  })();
+  return child;
+};
