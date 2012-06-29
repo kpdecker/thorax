@@ -128,7 +128,8 @@ $(function() {
         ++renderedEmptyCount;
       });
 
-      view.setCollection(clonedLetterCollection);
+      view.collection = clonedLetterCollection;
+      view.render();
       equal(view.$('li').length, 4 * indexMultiplier, msg + 'rendered node length matches collection length');
       equal(view.$('li')[0 * indexMultiplier].innerHTML + view.$('li')[3 * indexMultiplier].innerHTML, 'ad', msg + 'rendered nodes in correct order');
       equal(renderedCount, 1, msg + 'rendered event count');

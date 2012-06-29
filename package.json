@@ -43,7 +43,6 @@
         "packages/base/js/src/view/helpers/empty.js",
         "packages/base/js/src/view/events-builtin.js",
         "packages/base/js/src/view/scroll.js",
-        "packages/base/js/src/view/deprecated.js",
         "packages/base/js/src/layout.js",
         "packages/base/js/src/router.js",
         "packages/base/js/src/view-controller.js",

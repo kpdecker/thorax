@@ -146,7 +146,7 @@ _.extend(View.prototype, {
       model = false;
     } else {
       index = index || collection.indexOf(model) || 0;
-      item_view = this.renderItem(partial, model, index, collection);
+      item_view = (this.renderItem || renderItem).call(this, partial, model, index, collection);
     }
 
     if (item_view) {
@@ -190,7 +190,7 @@ _.extend(View.prototype, {
 });
 
 function onCollectionReset(partial, collection) {
-  this.renderCollection(partial, collection);
+  (this.renderCollection || renderCollection).call(this, partial, collection);
 }
 
 function renderCollection(partial, collection) {
@@ -225,7 +225,7 @@ function renderEmpty(partial, collection) {
     collection = this.collection;
   }
   var collectionOptions = partial.options,
-      context = this.emptyContext();
+      context = (this.emptyContext && this.emptyContext()) || {};
   if (collectionOptions['empty-view']) {
     var view = getViewInstance(collectionOptions['empty-view'], context);
     if (collectionOptions['empty-template']) {
@@ -250,7 +250,7 @@ function renderItem(partial, item, i, collection) {
       model: item
     });
     if (collectionOptions['item-template']) {
-      view.render(this.renderTemplate(collectionOptions['item-template'], this.itemContext(item, i)));
+      view.render(this.renderTemplate(collectionOptions['item-template'], (this.itemContext && this.itemContext(item, i)) || item.attributes));
     } else {
       view.render();
     }
@@ -260,14 +260,14 @@ function renderItem(partial, item, i, collection) {
     if (!itemTemplate) {
       throw new Error('collection helper in View: ' + (this.name || this.cid) + ' requires an item template.');
     }
-    return this.renderTemplate(itemTemplate, this.itemContext(item, i));
+    return this.renderTemplate(itemTemplate, (this.itemContext && this.itemContext(item, i)) || item.attributes);
   }
 }
 
 function appendEmpty(partial, collection) {
   var collectionElement = partial.$el;
   collectionElement.empty();
-  var emptyContent = this.renderEmpty(partial, collection);
+  var emptyContent = (this.renderEmpty || renderEmpty).call(this, partial, collection);
   emptyContent && this.appendItem(partial, collection, emptyContent, 0, {
     silent: true
   });
