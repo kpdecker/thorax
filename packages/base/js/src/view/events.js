@@ -58,6 +58,7 @@ _.extend(View.prototype, {
       _.each(this._partials, function(partial, cid) {
         partial.freeze();
       });
+      this.undelegateEvents();
     }
   }
 });
