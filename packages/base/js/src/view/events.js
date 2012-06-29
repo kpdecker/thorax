@@ -48,15 +48,17 @@ _.extend(View.prototype, {
     }
   },
 
-  freeze: function(modelOrCollection) {
-    if (this.model && (modelOrCollection === this.model || !modelOrCollection)) {
+  freeze: function(model) {
+    if (this.model && (model === this.model || !model)) {
       this._events.model.forEach(function(event) {
         this.model.unbind(event[0], event[1]);
       }, this);
     }
-    _.each(this._partials, function(partial, cid) {
-      partial.freeze();
-    });
+    if (!model) {
+      _.each(this._partials, function(partial, cid) {
+        partial.freeze();
+      });
+    }
   }
 });
 
