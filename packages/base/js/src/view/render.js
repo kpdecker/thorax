@@ -3,7 +3,13 @@ _.extend(View.prototype, {
     destroyPartials.call(this);
     if (typeof output === 'undefined' || (!_.isElement(output) && !is$(output) && !(output && output.el) && typeof output !== 'string' && typeof output !== 'function')) {
       if (!this.template) {
-        throw new Error('View ' + (this.name || this.cid) + '.render() was called with no content and no template set on the view.');
+        //if the name was set after the view was created try one more time to fetch a template
+        if (this.name) {
+          this.template = Thorax.registry.template(this.name, null, true);
+        }
+        if (!this.template) {
+          throw new Error('View ' + (this.name || this.cid) + '.render() was called with no content and no template set on the view.');
+        }
       }
       output = this.renderTemplate(this.template, this._getContext(this.model));
     } else if (typeof output === 'function') {

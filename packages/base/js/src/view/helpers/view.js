@@ -16,7 +16,8 @@ View.registerHelper('view', function(view, options) {
 
 function getViewInstance(name, attributes) {
   if (typeof name === 'string') {
-    return new (Thorax.registry.view(name))(attributes);
+    var klass = Thorax.registry.view(name);
+    return klass.cid ? _.extend(klass, attributes || {}) : new klass(attributes);
   } else if (typeof name === 'function') {
     return new name(attributes);
   } else {

@@ -58,6 +58,9 @@ _.each({
           protoProps.prototype.name = name;
           return Thorax.registry[methodName](name, className === 'Router' ? new protoProps : protoProps);
         } else if (protoProps.cid) {
+          if (!protoProps.name) {
+            protoProps.name = name;
+          }
           return Thorax.registry[methodName](name, protoProps);
         } else {
           protoProps.name = name;
