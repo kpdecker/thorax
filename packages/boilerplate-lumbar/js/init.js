@@ -1,5 +1,5 @@
 Thorax.templatePathPrefix = 'templates/';
-var Application = module.exports = new Thorax.Application(module.exports);
+var Application = module.exports = Thorax.Application.create(module.exports);
 $(document).ready(function() {
   $('body').append(Application.el);
   Application.initBackboneLoader();
