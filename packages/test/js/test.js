@@ -924,6 +924,10 @@ $(function() {
 
     equal(Application.template('test-a')({key:'value'}), '<p>value</p>', 'will compile a string to a template');
     equal(Application.template('test-b')({key:'value'}), '<p>value</p>', 'will accept a template function');
+
+    var instance = new Application.View();
+    Application.view('singleton', instance);
+    equal(Application.view('singleton'), instance, 'can set singleton');
   });
 
   test("url helper", function() {

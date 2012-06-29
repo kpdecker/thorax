@@ -57,6 +57,8 @@ _.each({
         if (protoProps.prototype) {
           protoProps.prototype.name = name;
           return Thorax.registry[methodName](name, className === 'Router' ? new protoProps : protoProps);
+        } else if (protoProps.cid) {
+          return Thorax.registry[methodName](name, protoProps);
         } else {
           protoProps.name = name;
           var klass = this[className].extend(protoProps, classProps);
@@ -87,8 +89,14 @@ Thorax.addModuleMethods = function(module, application) {
       return router;
     }
     if (!router) {
-      protoProps.name = module.name;
-      protoProps.routes = module.routes;
+      if (protoProps.prototype) {
+        protoProps.prototype.name = module.name;
+        protoProps.prototype.routes = module.routes;
+        protoProps = new protoProps;
+      } else {
+        protoProps.name = module.name;
+        protoProps.routes = module.routes;
+      }
       return application.router(module.name, protoProps);
     } else {
       _.extend(router, protoProps);
