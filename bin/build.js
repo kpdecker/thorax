@@ -74,7 +74,11 @@ function buildPackage(name, target, complete) {
       if (path.existsSync(pacakgeJSONLocation)) {
         deepExtend(packageJSONByTarget[pacakgeJSONLocation], JSON.parse(fs.readFileSync(pacakgeJSONLocation)));
       }
-      complete();
+      if (build.after) {
+        execute([build.after], complete);
+      } else {
+        complete();
+      }
     });
   }
   function buildBuilds(completeBuildBuilds) {

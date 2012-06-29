@@ -1,9 +1,9 @@
-var Application = new Thorax.Application;
+var Application = Thorax.Application.create();
 
 $(function() {
   document.body.appendChild(Application.el);
 });
 
-Application.setView(new Thorax.View({
+Application.setView(Thorax.View.create({
   template: 'Hello World!'
 }));

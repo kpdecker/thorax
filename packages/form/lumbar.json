@@ -3,7 +3,7 @@
     "base": {
       "scripts": [
         {
-          "src": "js/lib/thorax.loading.js"
+          "src": "js/lib/thorax.form.js"
         }
       ]
     }

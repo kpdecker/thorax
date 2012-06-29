@@ -23,7 +23,7 @@
   },
   "scripts": {
     "start": "node bin/server.js . 8083",
-    "test": "phantomjs bin/run-qunit.js 'http://localhost:8083/zepto.html' 'http://localhost:8083/jquery.html' 'http://localhost:8083/zepto-form.html' 'http://localhost:8083/jquery-form.html' 'http://localhost:8083/zepto-loading.html' 'http://localhost:8083/jquery-loading.html'"
+    "test": "phantomjs bin/run-qunit.js 'http://localhost:8083/zepto.html' 'http://localhost:8083/jquery.html' 'http://localhost:8083/zepto-form.html' 'http://localhost:8083/jquery-form.html' 'http://localhost:8083/zepto-data.html' 'http://localhost:8083/jquery-data.html'"
   },
   "builds": {
     "thorax": {
@@ -56,12 +56,12 @@
       ],
       "target": "builds/base/js/lib/thorax.js"
     },
-    "thorax.loading": {
+    "thorax.data": {
       "sources": [
-        "packages/loading/js/src/loading.js",
-        "packages/loading/js/src/helpers.js"
+        "packages/data/js/src/data.js",
+        "packages/data/js/src/helpers.js"
       ],
-      "target": "builds/base/js/lib/thorax.loading.js"
+      "target": "builds/base/js/lib/thorax.data.js"
     },
     "thorax.form": {
       "sources": [
@@ -77,13 +77,14 @@
         "packages/base/js/lib": "js/lib",
         "builds/base/js/lib": "js/lib",
         "packages/bootstrap": ""
-      }
+      },
+      "after": "rm builds/boilerplate-html/lumbar.json"
     },
     "boilerplate-lumbar": {
       "files": {
         "packages/boilerplate-lumbar/lumbar.json": "lumbar.json",
         "packages/form/lumbar.json": "lumbar.json",
-        "packages/loading/lumbar.json": "lumbar.json",
+        "packages/data/lumbar.json": "lumbar.json",
         "packages/bootstrap/lumbar.json": "lumbar.json"
       },
       "directories": {
@@ -91,9 +92,9 @@
         "builds/base/js/lib": "js/lib",
         "packages/base/js/lib": "js/lib",
         "packages/bootstrap": "",
-        "packages/loading/js/views": "js/views",
-        "packages/loading/styles": "styles",
-        "packages/loading/templates": "templates"
+        "packages/data/js/views": "js/views",
+        "packages/data/styles": "styles",
+        "packages/data/templates": "templates"
       }
     },
     "hello-lumbar": {
@@ -108,7 +109,7 @@
     "docs": {
       "builds": ["boilerplate-lumbar"],
       "directories": {
-        "packages/loading": "",
+        "packages/data": "",
         "packages/form": "",
         "packages/docs": ""
       }
