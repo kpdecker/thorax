@@ -1,4 +1,4 @@
-var Application = Layout.extend({
+var Application = ViewController.extend({
   name: 'application',
   initialize: function(options) {
     //ensure backbone history has started
