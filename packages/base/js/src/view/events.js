@@ -84,11 +84,10 @@ _.extend(View, {
 
 function containHandlerToCurentView(handler, cid) {
   return function(event) {
-    var containing_view_element = $(event.target).closest('[' + viewNameAttributeName + ']');
-    if (!containing_view_element.length || containing_view_element[0].getAttribute(viewCidAttributeName) == cid) {
+    if ($(event.target).closest('[' + viewNameAttributeName + ']').attr(viewCidAttributeName) == cid) {
       handler(event);
     }
-  };
+  }
 }
 
 var domEvents = [

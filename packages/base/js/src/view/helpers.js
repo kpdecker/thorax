@@ -121,7 +121,8 @@ View.registerHelper('link', function(url, options) {
 });
 
 internalViewEvents['click [' + callMethodAttributeName + ']'] = function(event) {
-  this[$(event.target).attr(callMethodAttributeName)].call(this, event);
+  var methodName = $(event.target).attr(callMethodAttributeName);
+  this[methodName].call(this, event);
 };
 
 View.prototype._anchorClick = function(event) {
