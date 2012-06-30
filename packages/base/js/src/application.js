@@ -29,10 +29,19 @@ var Application = ViewController.extend({
   setModel:function(){},
   render: generateRenderLayout('_template'),
   start: function(options) {
-    this.render();
+    //if this is a lumbar app, setup the module loader
+    this.initBackboneLoader && this.initBackboneLoader();
+    //application and other templates included by the base
+    //application may want to use the link and url helpers
+    //which use hasPushstate, etc. so setup history, then
+    //render, then dispatch
     if (!Backbone.History.started) {
-      Backbone.history.start(options);
+      Backbone.history.start(_.extend({
+        silent: true
+      }, options || {}));
     }
+    this.render();
     this.trigger('ready', options);
+    Backbone.history.loadUrl();
   }
 });
