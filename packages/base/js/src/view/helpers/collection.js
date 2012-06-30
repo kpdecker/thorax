@@ -82,10 +82,10 @@ _.extend(View.prototype, {
   _bindCollection: function(collection, partial) {
     var oldCollection = this.collection;
     if (collection) {
+      collection.cid = collection.cid || _.uniqueId('collection');
       if (!this._boundCollectionsByCid[collection.cid]) {
         this._boundCollectionsByCid[collection.cid] = collection;
       }
-      collection.cid = collection.cid || _.uniqueId('collection');
       partial.options = this.setCollectionOptions(collection, partial.options);
       var collectionEvents = this._events.collection,
           collectionEventCallbacks = [];
