@@ -843,6 +843,36 @@ $(function() {
     equal(bEventCounter.destroyed, 1);
   });
 
+  test("ViewController", function() {
+    var viewControllerA = Application.ViewController.create({
+      className: 'view-controller-a'
+    });
+    var testView = Application.View.create({
+      template: '',
+      events: {
+        ready: function() {
+          ok(this.$el.parents('.view-controller-a').length, 'ViewController sets itself as the view on the parent before the route is called');
+        }
+      }
+    })
+    var viewControllerB = Application.ViewController.create({
+      parent: viewControllerA,
+      routes: {
+        "test": "test"
+      },
+      test: function() {
+        this.setView(testView);
+      }
+    });
+    var callCount = 0;
+    viewControllerB.on('route', function(name) {
+      ++callCount;
+      equal(name, 'test');
+    });
+    viewControllerB.navigate('test', {trigger: true});
+    equal(callCount, 1, 'route event triggered');
+  });
+
   test("Application can have template", function() {
     var a = new Thorax.Application({
       template: '<div class="outer">{{layout}}</div>'
