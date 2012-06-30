@@ -976,6 +976,17 @@ $(function() {
     equal(view.$('a').attr('href'), '#/a/c');
   });
 
+  test("button and link helpers", function() {
+    var view = new Application.View({
+      someMethod: function(){},
+      template: '{{#button "someMethod"}}Button{{/button}}{{#link "href"}}content{{/link}}'
+    });
+    view.render();
+    equal(view.$('button').html(),'Button');
+    equal(view.$('a').html(),'content');
+    equal(view.$('a').attr('href'),'#href');
+  });
+
   test("$.fn.view, $.fn.model, $.fn.collection", function() {
     var child = new Application.View({
       template: '{{#collection letters tag="ul"}}<li>{{letter}}</li>{{/collection}}',
