@@ -49,6 +49,7 @@ _.extend(View.prototype, {
   },
 
   freeze: function(options) {
+    this._frozen = true;
     options = _.extend({
       dom: true,
       model: true,

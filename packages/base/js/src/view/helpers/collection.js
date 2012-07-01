@@ -80,7 +80,9 @@ _.extend(View.prototype, {
   },
 
   _bindCollection: function(collection, partial) {
-    var oldCollection = this.collection;
+    if (this._frozen) {
+      return this;
+    }
     if (collection) {
       collection.cid = collection.cid || _.uniqueId('collection');
       if (!this._boundCollectionsByCid[collection.cid]) {
@@ -104,7 +106,7 @@ _.extend(View.prototype, {
         });
         collectionEventCallbacks = [];
       });
-      collection.trigger('set', collection, oldCollection);
+      collection.trigger('set', collection);
   
       if (this._shouldFetch(collection, partial.options)) {
         this._loadCollection(collection, partial.options);

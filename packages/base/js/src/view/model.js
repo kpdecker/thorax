@@ -17,21 +17,25 @@ _.extend(View.prototype, {
       el.setAttribute(modelNameAttributeName, model.name);
     }
 
-    var old_model = this.model;
+    var oldModel = this.model;
 
-    if (old_model) {
-      this.freeze(old_model);
+    if (oldModel) {
+      this._events.model.forEach(function(event) {
+        oldModel.off(event[0], event[1]);
+      }, this);
     }
 
     if (model) {
       this.model = model;
       this.setModelOptions(options);
-
+      if (this._frozen) {
+        return this;
+      }
       this._events.model.forEach(function(event) {
         this.model.on(event[0], event[1]);
       }, this);
 
-      this.model.trigger('set', this.model, old_model);
+      this.model.trigger('set', this.model, oldModel);
   
       if (this._shouldFetch(this.model, this._modelOptions)) {
         var success = this._modelOptions.success;
