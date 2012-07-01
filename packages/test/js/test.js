@@ -552,6 +552,28 @@ $(function() {
     equal(childReturning$.$('p').html(), 'template');
   });
 
+  test("super helper", function() {
+    var parent, child;
+    Application.template('super-named-test', '<div class="parent"></div>');
+    parent = Application.view('super-named-test', {});
+    child = parent.extend({
+      template: '<div class="child"></div>{{super}}'
+    }).create();
+    child.render();
+    equal(child.$('.parent').length, 1);
+    equal(child.$('.child').length, 1);
+
+    parent = Application.view('super-test', {
+      template: '<div class="parent"></div>'
+    });
+    child = parent.extend({
+      template: '<div class="child"></div>{{super}}'
+    }).create();
+    child.render();
+    equal(child.$('.parent').length, 1);
+    equal(child.$('.child').length, 1);
+  });
+
   test("local view functions are called in template scope", function() {
     var child = new Application.View({
       template: '{{key "value"}}',
