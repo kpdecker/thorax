@@ -22,7 +22,11 @@ _.each({
         name = Thorax.templatePathPrefix + name;
       }
       //always remove handlebars extension wether setting or getting
-      name = name.replace(handlebarsExtensionRegExp, '')
+      name = name.replace(handlebarsExtensionRegExp, '');
+      //append the template path prefix if it is missing
+      if (Thorax.templatePathPrefix && Thorax.templatePathPrefix.length && name && name.substr(0, Thorax.templatePathPrefix.length) !== Thorax.templatePathPrefix) {
+        name = Thorax.templatePathPrefix + name;
+      }
     }
     if (!value) {
       if (!registry[name] && !ignoreErrors) {
