@@ -993,6 +993,10 @@ $(function() {
     var instance = new Application.View();
     Application.view('singleton', instance);
     equal(Application.view('singleton'), instance, 'can set singleton');
+
+    //view instance get's name, bad practice, but more predictable
+    instance = Application.view('test-singleton', new Application.View());
+    equal(instance.name, 'test-singleton', 'view instance is assigned a name when passed to registry');
   });
 
   test("url helper", function() {
