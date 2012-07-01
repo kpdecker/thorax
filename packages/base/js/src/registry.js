@@ -28,7 +28,7 @@ _.each({
         name = Thorax.templatePathPrefix + name;
       }
     }
-    if (!value) {
+    if (typeof value !== 'string' && !value) {
       if (!registry[name] && !ignoreErrors) {
         throw new Error(methodName + ': ' + name + ' does not exist.');
       }
