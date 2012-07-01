@@ -63,7 +63,7 @@ View.registerPartialHelper = function(name, callback) {
     callbacks.forEach(function(injectedCallback) {
       injectedCallback.apply(this, args);
     }, this);
-    var htmlAttributes = {};
+    var htmlAttributes = View.htmlAttributesFromOptions(options.hash);;
     htmlAttributes[partialPlaceholderAttributeName] = partial.cid;
     callback.apply(this, args);
     return new Handlebars.SafeString(View.tag(htmlAttributes, ''));
