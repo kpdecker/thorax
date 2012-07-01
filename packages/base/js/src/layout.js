@@ -21,9 +21,12 @@ function generateRenderLayout(templateAttributeName) {
 }
 
 var Layout = View.extend({
-  destroyViews: true,
   render: generateRenderLayout(),
-  setView: function(view){
+  setView: function(view, options) {
+    options = _.extend({
+      scroll: true,
+      destroy: true
+    });
     if (typeof view === 'string') {
       view = new (Thorax.registry.view(view));
     }
@@ -32,20 +35,23 @@ var Layout = View.extend({
     if (view == old_view){
       return false;
     }
-    this.trigger('change:view:start', view, old_view);
-    old_view && old_view.trigger('deactivated');
-    view && view.trigger('activated');
+    if (options.destroy) {
+      view._shouldDestroyOnNextSetView = true;
+    }
+    this.trigger('change:view:start', view, old_view, options);
+    old_view && old_view.trigger('deactivated', options);
+    view && view.trigger('activated', options);
     if (old_view && old_view.el && old_view.el.parentNode) {
       old_view.$el.remove();
     }
     //make sure the view has been rendered at least once
     view && ensureRendered.call(view);
     view && getLayoutViewsTargetElement.call(this).appendChild(view.el);
-    window.scrollTo(0, minimumScrollYOffset);
+    options.scroll && window.scrollTo(0, minimumScrollYOffset);
     this._view = view;
-    this.destroyViews && old_view && old_view.destroy();
-    this._view && this._view.trigger('ready');
-    this.trigger('change:view:end', view, old_view);
+    old_view && old_view._shouldDestroyOnNextSetView && old_view.destroy();
+    this._view && this._view.trigger('ready', options);
+    this.trigger('change:view:end', view, old_view, options);
     return view;
   },
 

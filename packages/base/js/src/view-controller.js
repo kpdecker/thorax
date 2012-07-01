@@ -7,7 +7,9 @@ _.extend(ViewController.prototype, Router.prototype, {
     this.on('route:before', function(router, name) {
       if (this.parent) {
         if (this.parent.getView() !== this) {
-          this.parent.setView(this);
+          this.parent.setView(this, {
+            destroy: false
+          });
         }
       }
     }, this);
