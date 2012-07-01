@@ -26,7 +26,7 @@ var Layout = View.extend({
     options = _.extend({
       scroll: true,
       destroy: true
-    });
+    }, options || {});
     if (typeof view === 'string') {
       view = new (Thorax.registry.view(view));
     }
