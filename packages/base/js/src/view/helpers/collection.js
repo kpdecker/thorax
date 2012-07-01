@@ -96,11 +96,11 @@ _.extend(View.prototype, {
           return event[1].apply(this, args);
         }
         collection.on(event[0], collectionEventCallback);
-        collectionEventCallbacks.push(collectionEventCallback);
+        collectionEventCallbacks.push([event[0], collectionEventCallback]);
       });
       partial.on('freeze', function() {
-        collectionEvents.forEach(function(event, i) {
-          collection.off(event[0], collectionEventCallbacks[i]);
+        collectionEventCallbacks.forEach(function(storedCallbackArguments, i) {
+          collection.off.apply(collection, storedCallbackArguments);
         });
         collectionEventCallbacks = [];
       });
