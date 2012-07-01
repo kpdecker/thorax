@@ -17,7 +17,6 @@ var childProcess = require('child_process'),
   },
   startServer = function() {
     var express = require('express'),
-      portscanner = require('portscanner'),
       argv = require('optimist').argv,
       port = process.env.PORT;
     
@@ -42,7 +41,7 @@ var childProcess = require('child_process'),
     }
 
     if (!port) {
-      portscanner.findAPortNotInUse(8000, 8025, 'localhost', function(error, foundPort) {
+      require('portscanner').findAPortNotInUse(8000, 8025, 'localhost', function(error, foundPort) {
         listen(foundPort);
       });
     } else {
