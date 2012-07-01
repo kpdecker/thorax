@@ -48,16 +48,23 @@ _.extend(View.prototype, {
     }
   },
 
-  freeze: function(model) {
-    if (this.model && (model === this.model || !model)) {
+  freeze: function(options) {
+    options = _.extend({
+      dom: true,
+      model: true,
+      partials: true
+    }, options || {});
+    if (options.model && this.model) {
       this._events.model.forEach(function(event) {
         this.model.off(event[0], event[1]);
       }, this);
     }
-    if (!model) {
+    if (options.partials) {
       _.each(this._partials, function(partial, cid) {
         partial.freeze();
       });
+    }
+    if (options.dom) {
       this.undelegateEvents();
     }
   }
