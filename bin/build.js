@@ -6,13 +6,14 @@ var fs = require('fs'),
     async = require('async'),
     mkdirp = require('mkdirp'),
     watchTree = require('fs-watch-tree').watchTree,
+    uglify = require('uglify-js'),
     packageJSON = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'package.json'))),
     deepExtend = require(path.join(__dirname, 'deep-extend.js')),
     lumbarJSONByTarget = {},
     packageJSONByTarget = {};
 
-function execute(commands, callback) {
-  exec(commands.join(";"), function(error, stdout, stderr) {
+function execute(commands, callback, options) {
+  exec(commands.join(";"), options || {}, function(error, stdout, stderr) {
     if (stderr) {
       console.log(stderr);
     }
@@ -79,6 +80,7 @@ function buildPackage(name, target, complete) {
       } else {
         complete();
       }
+      
     });
   }
   function buildBuilds(completeBuildBuilds) {
@@ -128,9 +130,13 @@ function buildAllPackages() {
             if (path.existsSync(packageJSONLocation)) {
               savePackageJSONForTarget(packageJSONLocation);
             }
-            execute(['zip ' + targetDirectory + '.zip -r ' + targetDirectory], function() {
+            var buildsDir = path.join(__dirname, '..', 'builds');
+            var zipTarget = targetDirectory.substr(buildsDir.length + 1);
+            execute(['zip ' + zipTarget + '.zip -r ' + zipTarget], function() {
               console.log('built', name);
               next();
+            }, {
+              cwd: buildsDir
             });
           });
         });
@@ -147,9 +153,22 @@ function buildConcatBuilds(builds, next) {
         targetDir = path.dirname(targetPath);
     function writeFile() {
       console.log('wrote', targetPath);
-      fs.writeFile(targetPath, item.sources.map(function(source) {
+      var data = item.sources.map(function(source) {
         return fs.readFileSync(path.join(__dirname, '..', source));
-      }).join("\n"), next);
+      }).join("\n");
+      fs.writeFile(targetPath, data, function() {
+        if (item.uglify) {
+          var ast = uglify.parser.parse(data);
+          ast = uglify.uglify.ast_mangle(ast);
+          ast = uglify.uglify.ast_squeeze(ast);
+          data = uglify.uglify.gen_code(ast);
+          var uglyPath = targetPath.replace(/\.js$/, '.min.js');
+          fs.writeFile(uglyPath, data, next);
+          console.log('wrote', uglyPath);
+        } else {
+          next();
+        }
+      });
     }
     if (!path.existsSync(targetDir)) {
       mkdirp(targetDir, writeFile);

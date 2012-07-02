@@ -1,3 +1,0 @@
-Application.view('docs/examples', {
-
-});
