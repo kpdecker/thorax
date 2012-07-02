@@ -289,8 +289,10 @@ MainView = Application.view 'main'
     @editorView.save =>
       @openApplication()
   createModule: (event) ->
+    event.preventDefault()
     new CreateModuleModal model: new Module(raw: {})
   toggleInspector: (event) ->
+    event.preventDefault()
     _.defer =>
       target = $(event.target)
       toggled = target.hasClass 'active'

@@ -419,6 +419,7 @@
       });
     },
     createModule: function(event) {
+      event.preventDefault();
       return new CreateModuleModal({
         model: new Module({
           raw: {}
@@ -426,6 +427,7 @@
       });
     },
     toggleInspector: function(event) {
+      event.preventDefault();
       var _this = this;
       return _.defer(function() {
         var target, toggled;
