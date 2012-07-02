@@ -127,16 +127,16 @@ View.registerHelper('url', function(url) {
 });
 
 View.registerHelper('button', function(method, options) {
-  options.hash.tag = 'button';
+  options.hash.tag = options.hash.tag || options.hash.tagName || 'button';
   options.hash[callMethodAttributeName] = method;
-  return new Handlebars.SafeString(View.tag.call(this, options.hash, options.fn(this), this));
+  return new Handlebars.SafeString(View.tag.call(this, options.hash, options.fn ? options.fn(this) : '', this));
 });
 
 View.registerHelper('link', function(url, options) {
-  options.hash.tag = 'a';
+  options.hash.tag = options.hash.tag || options.hash.tagName || 'a';
   options.hash.href = Handlebars.helpers.url.call(this, url);
   options.hash[callMethodAttributeName] = '_anchorClick';
-  return new Handlebars.SafeString(View.tag.call(this, options.hash, options.fn(this), this));
+  return new Handlebars.SafeString(View.tag.call(this, options.hash, options.fn ? options.fn(this) : '', this));
 });
 
 internalViewEvents['click [' + callMethodAttributeName + ']'] = function(event) {
