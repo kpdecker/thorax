@@ -411,6 +411,86 @@ $(function() {
     testNesting(view, 'nested inline');
   });
 
+  test("collection model updates will update item", function() {
+    var collection = new Application.Collection([{name: 'a'}], {
+      comparator: function(obj) {
+        return obj.get("name");
+      }
+    });
+    var renderCount = 0;
+    var view = new Application.View({
+      events: {
+        rendered: function() {
+          ++renderCount;
+        }
+      },
+      collection: collection,
+      template: '{{#collection tag="ul"}}<li>{{name}}</li>{{/collection}}'
+    });
+    view.render();
+    equal(renderCount, 1);
+    equal(view.$('li').html(), 'a');
+    collection.at(0).set({name: 'A'});
+    equal(view.$('li').html(), 'A');
+    equal(renderCount, 1);
+    collection.add({name: 'b'});
+    equal(view.$('li:last-child').html(), 'b');
+    collection.at(1).set({name: 'B'});
+    equal(view.$('li:last-child').html(), 'B');
+    equal(renderCount, 1);
+
+    //ensure correct index is updated
+    collection.at(0).set({name: 'a'});
+    collection.at(1).set({name: 'c'});
+    equal(view.$('li:first-child').html(), 'a');
+    equal(view.$('li:last-child').html(), 'c');
+    collection.at(0).set({name: 'A'});
+    collection.add({name: 'b'});
+    equal(collection.at(2).attributes.name, 'c');
+    collection.at(2).set({name: 'C'});
+    equal(view.$('li:first-child').html(), 'A');
+    equal(view.$('li:last-child').html(), 'C');
+
+    collection = new Application.Collection({name: 'one'});
+    renderCount = 0;
+    var itemRenderCount = 0;
+    view = new Application.View({
+      events: {
+        rendered: function() {
+          ++renderCount;
+        }
+      },
+      itemView: Application.View.extend({
+        events: {
+          rendered: function() {
+            ++itemRenderCount;
+          }
+        },
+        tagName: 'li',
+        template: '{{name}}'
+      }),
+      collection: collection,
+      template: '{{collection tag="ul" item-view=itemView}}'
+    });
+    view.render();
+    equal(itemRenderCount, 1);
+    equal(renderCount, 1);
+    equal(view.$('li').html(), 'one');
+    collection.at(0).set({
+      name: 'two'
+    });
+    equal(itemRenderCount, 2);
+    equal(view.$('li').html(), 'two');
+    equal(renderCount, 1);
+    collection.add({name: 'three'});
+    equal(itemRenderCount, 3);
+    equal(view.$('li:last-child').html(), 'three');
+    collection.at(1).set({name: 'four'});
+    equal(itemRenderCount, 4);
+    equal(view.$('li:last-child').html(), 'four');
+    equal(renderCount, 1);
+  });
+
   test("graceful failure of empty collection with no empty template", function() {
     var view = new Application.View({
       template: '{{collection item-template="letter-item"}}',

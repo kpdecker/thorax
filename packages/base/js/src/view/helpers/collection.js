@@ -234,27 +234,44 @@ function renderEmpty(partial, collection) {
   }
 }
 
-function renderItem(partial, item, i, collection) {
+function renderItem(partial, model, i, collection) {
   if (!collection) {
     collection = this.collection;
   }
   var collectionOptions = partial.options;
   if (collectionOptions['item-view']) {
-    var view = getViewInstance(collectionOptions['item-view'], {
-      model: item
-    });
-    if (collectionOptions['item-template']) {
-      view.render(this.renderTemplate(collectionOptions['item-template'], (this.itemContext && this.itemContext(item, i)) || item.attributes));
-    } else {
-      view.render();
+    var viewOptions = {
+      model: model
+    };
+    //itemContext deprecated
+    if (this.itemContext) {
+      viewOptions.context = this.itemContext;
     }
+    if (collectionOptions['item-template']) {
+      viewOptions.template = collectionOptions['item-template'];
+    }
+    var view = getViewInstance(collectionOptions['item-view'], viewOptions);
+    ensureRendered.call(view);
     return view;
   } else {
     var itemTemplate = collectionOptions['item-template'] || (this.name && this._loadTemplate(this.name + '-item', true));
     if (!itemTemplate) {
       throw new Error('collection helper in View: ' + (this.name || this.cid) + ' requires an item template.');
     }
-    return this.renderTemplate(itemTemplate, (this.itemContext && this.itemContext(item, i)) || item.attributes);
+    //if we rendered with item views model changes will be observed
+    //by the generated item view but if we rendered with templates
+    //then model changes need to be bound as nothing is watching
+    function onModelChange() {
+      partial.$el.find('[' + modelCidAttributeName + '="' + model.cid +'"]').remove();
+      this.appendItem(partial, collection, model, collection.indexOf(model));
+    }
+    partial.addEvent(model, 'change', onModelChange, this);
+    partial.addEvent(model, 'remove', function() {
+      //in case the model is removed from the collection before the partial
+      //is frozen / destroyed
+      model.off('change', onModelChange, this);
+    }, this);
+    return this.renderTemplate(itemTemplate, (this.itemContext && this.itemContext(model, i)) || model.attributes)
   }
 }
 
