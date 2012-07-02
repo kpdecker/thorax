@@ -89,22 +89,14 @@ _.extend(View.prototype, {
         this._boundCollectionsByCid[collection.cid] = collection;
       }
       partial.options = this.setCollectionOptions(collection, partial.options);
-      var collectionEvents = this._events.collection,
-          collectionEventCallbacks = [];
+      var collectionEvents = this._events.collection;
       collectionEvents.forEach(function(event) {
         function collectionEventCallback() {
           var args = _.toArray(arguments);
           args.unshift(partial);
           return event[1].apply(this, args);
         }
-        collection.on(event[0], collectionEventCallback);
-        collectionEventCallbacks.push([event[0], collectionEventCallback]);
-      });
-      partial.on('freeze', function() {
-        collectionEventCallbacks.forEach(function(storedCallbackArguments, i) {
-          collection.off.apply(collection, storedCallbackArguments);
-        });
-        collectionEventCallbacks = [];
+        partial.addEvent(collection, event[0], collectionEventCallback);
       });
       collection.trigger('set', collection);
   

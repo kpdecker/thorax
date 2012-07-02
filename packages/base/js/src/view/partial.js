@@ -4,6 +4,7 @@ var Partial = function(cid, view, options) {
   this.fn = options.fn;
   this.inverse = options.inverse;
   this.options = options.hash || {};
+  this._eventArguments = [];
   this._ensureElement();
 };
 
@@ -29,11 +30,18 @@ _.extend(Partial.prototype, Backbone.Events, {
       return element;
     }
   },
+  addEvent: function(target, eventName, handler, context) {
+    this._eventArguments.push([target, eventName, handler, context]);
+    return target.on(eventName, handler, context);
+  },
   render: function(options) {
     this.html(this.fn(this.context(options)));
   },
   freeze: function() {
     this.trigger('freeze');
+    this._eventArguments.forEach(function(args) {
+      args[0].off(args[1], args[2], args[3]);
+    });
   },
   destroy: function() {
     this.freeze();

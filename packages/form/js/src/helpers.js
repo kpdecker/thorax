@@ -20,12 +20,8 @@ Thorax.View.registerPartialHelper('error', function(partial) {
     partial.$el.hide();
   }
 
-  partial.view.on('error', invokeFn);
-  partial.view.on('serialize', invokeInverse);
-  partial.on('freeze', function() {
-    partial.view.off('error', invokeFn);
-    partial.view.off('serialize', invokeInverse);
-  });
+  partial.addEvent(partial.view, 'error', invokeFn);
+  partial.addEvent(partial.view, 'serialize', invokeInverse);
 
   invokeInverse(this);
 });

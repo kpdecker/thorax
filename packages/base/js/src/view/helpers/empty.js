@@ -37,16 +37,10 @@ View.registerPartialHelper('empty', function(collection, partial) {
     function collectionResetCallback() {
       partial.html(callback(partial.context()));
     }
-    
-    collection.on('remove', collectionRemoveCallback);
-    collection.on('add', collectionAddCallback);
-    collection.on('reset', collectionResetCallback);
 
-    partial.on('freeze', function() {
-      collection.off('remove', collectionRemoveCallback);
-      collection.off('add', collectionAddCallback);
-      collection.off('reset', collectionResetCallback);
-    });
+    partial.addEvent(collection, 'remove', collectionRemoveCallback);
+    partial.addEvent(collection, 'add', collectionAddCallback);
+    partial.addEvent(collection, 'reset', collectionResetCallback);
   }
 
   partial.html(callback(this));
