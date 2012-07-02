@@ -184,7 +184,7 @@ _.extend(View.prototype, {
       appendViews.call(this, item_element);
 
       if (!options.silent) {
-        this.trigger('rendered:item', item_element);
+        this.trigger('rendered:item', partial, collection, model, item_element, index);
       }
     }
     return item_view;
@@ -219,7 +219,7 @@ function renderCollection(partial, collection) {
       }
     }, this);
   }
-  this.trigger('rendered:collection', collectionElement, collection);
+  this.trigger('rendered:collection', partial, collection);
 }
 
 function renderEmpty(partial, collection) {
@@ -273,5 +273,5 @@ function appendEmpty(partial, collection) {
   emptyContent && this.appendItem(partial, collection, emptyContent, 0, {
     silent: true
   });
-  this.trigger('rendered:empty', collection);
+  this.trigger('rendered:empty', partial, collection);
 }
