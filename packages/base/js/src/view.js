@@ -62,7 +62,7 @@ _.extend(View.prototype, Backbone.View.prototype, {
     //compile a string if it is set as this.template
     if (typeof this.template === 'string') {
       this.template = Handlebars.compile(this.template);
-    } else if (this.name) {
+    } else if (this.name && !this.template) {
       //fetch the template 
       this.template = Thorax.registry.template(this.name, null, true);
     }
