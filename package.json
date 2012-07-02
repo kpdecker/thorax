@@ -19,7 +19,8 @@
     "underscore": "1.3.3",
     "mkdirp": "0.3.3",
     "async": "0.1.22",
-    "fs-watch-tree": "0.2.0"
+    "fs-watch-tree": "0.2.0",
+    "uglify-js": "1.3.2"
   },
   "scripts": {
     "start": "node bin/server.js . 8083",
@@ -71,14 +72,28 @@
       ],
       "target": "builds/base/js/lib/thorax.form.js"
     },
-    "boilerplate-html": {
+    "thorax.combined": {
+      "sources": [
+        "packages/base/js/lib/jquery.js",
+        "packages/base/js/lib/underscore.js",
+        "packages/base/js/lib/backbone.js",
+        "packages/base/js/lib/handlebars.js",
+        "packages/bootstrap/js/lib/bootstrap.js",
+        "builds/base/js/lib/thorax.js",
+        "builds/base/js/lib/thorax.data.js",
+        "builds/base/js/lib/thorax.form.js"
+      ],
+      "target": "builds/thorax.combined.js",
+      "uglify": true
+    },
+    "thorax-html": {
       "directories": {
         "packages/boilerplate-html": "",
         "packages/base/js/lib": "js/lib",
         "builds/base/js/lib": "js/lib",
         "packages/bootstrap": ""
       },
-      "after": "rm builds/boilerplate-html/lumbar.json"
+      "after": "rm builds/thorax-html/lumbar.json"
     },
     "boilerplate-lumbar": {
       "files": {
@@ -97,24 +112,16 @@
         "packages/data/templates": "templates"
       }
     },
-    "hello-lumbar": {
+    "thorax-node": {
       "builds": ["boilerplate-lumbar"],
       "directories": {
         "packages/hello-world": "",
         "packages/admin": "",
-        "packages/base/js/lib": "admin/js/lib",
-        "builds/base/js/lib": "admin/js/lib"
+        "packages/base/js/lib": "public/admin/js/lib",
+        "builds/base/js/lib": "public/admin/js/lib"
       }
     },
-    "docs": {
-      "builds": ["boilerplate-lumbar"],
-      "directories": {
-        "packages/data": "",
-        "packages/form": "",
-        "packages/docs": ""
-      }
-    },
-    "test": {
+    "thorax-test": {
       "directories": {
         "packages/base/js/lib": "js/lib",
         "builds/base/js/lib": "js/lib",
