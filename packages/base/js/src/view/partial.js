@@ -49,7 +49,7 @@ _.extend(Partial.prototype, Backbone.Events, {
     this.off();
   },
   context: function(options) {
-    return _.extend(this.view._getContext(this.view.model), options || {});
+    return getTemplateContext.call(this.view, _.extend(this.view._getContext(this.view.model), options || {}));
   }
 });
 
