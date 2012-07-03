@@ -83,8 +83,7 @@
         "builds/base/js/lib/thorax.data.js",
         "builds/base/js/lib/thorax.form.js"
       ],
-      "target": "builds/thorax.combined.js",
-      "uglify": true
+      "target": "builds/thorax.combined.js"
     },
     "thorax-html": {
       "directories": {
