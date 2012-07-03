@@ -11,12 +11,6 @@ internalViewEvents.model = {
 
 _.extend(View.prototype, {
   setModel: function(model, options) {
-    var el = (this.el[0] || this.el);
-    el.setAttribute(modelCidAttributeName, model.cid);
-    if (model.name) {
-      el.setAttribute(modelNameAttributeName, model.name);
-    }
-
     var oldModel = this.model;
 
     if (oldModel) {
@@ -26,6 +20,10 @@ _.extend(View.prototype, {
     }
 
     if (model) {
+      this.$el.attr(modelCidAttributeName, model.cid);
+      if (model.name) {
+        this.$el.attr(modelNameAttributeName, model.name);
+      }
       this.model = model;
       this.setModelOptions(options);
       if (this._frozen) {
@@ -49,13 +47,15 @@ _.extend(View.prototype, {
       this._modelOptions = false;
       this.model = false;
       this._onModelChange();
+      this.$el.removeAttr(modelCidAttributeName);
+      this.$el.attr(modelNameAttributeName);
     }
 
     return this;
   },
 
   _onModelChange: function() {
-    if (this._modelOptions && this._modelOptions.render) {
+    if (!this._modelOptions || (this._modelOptions && this._modelOptions.render)) {
       this.render();
     }
   },
