@@ -610,8 +610,8 @@ $(function(){
 
   test("loading-template and loading-view collection helper options", function() {
     //use low level events as flusheQueue / fetchQueue interferes
-    Application.templates['collection-loading.handlebars'] = Handlebars.compile('<li class="loading-item">loading</li>');
-    Application.templates['collection-loading-view.handlebars'] = Handlebars.compile('loading');
+    Application.template('collection-loading.handlebars', '<li class="loading-item">loading</li>');
+    Application.template('collection-loading-view.handlebars', 'loading');
     Application.View.extend({
       name: 'collection-loading-view',
       tagName: 'li'
