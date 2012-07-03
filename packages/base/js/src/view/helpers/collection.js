@@ -107,6 +107,16 @@ _.extend(View.prototype, {
         //without triggering event on collection
         onCollectionReset.call(this, partial, collection);
       }
+
+      //if we rendered with item views model changes will be observed
+      //by the generated item view but if we rendered with templates
+      //then model changes need to be bound as nothing is watching
+      if (!partial.options['item-view']) {
+        partial.addEvent(collection, 'change', function(model) {
+          partial.$el.find('[' + modelCidAttributeName + '="' + model.cid +'"]').remove();
+          this.appendItem(partial, collection, model, collection.indexOf(model));
+        }, this);
+      }
     }
   
     return this;
@@ -258,19 +268,6 @@ function renderItem(partial, model, i, collection) {
     if (!itemTemplate) {
       throw new Error('collection helper in View: ' + (this.name || this.cid) + ' requires an item template.');
     }
-    //if we rendered with item views model changes will be observed
-    //by the generated item view but if we rendered with templates
-    //then model changes need to be bound as nothing is watching
-    function onModelChange() {
-      partial.$el.find('[' + modelCidAttributeName + '="' + model.cid +'"]').remove();
-      this.appendItem(partial, collection, model, collection.indexOf(model));
-    }
-    partial.addEvent(model, 'change', onModelChange, this);
-    partial.addEvent(model, 'remove', function() {
-      //in case the model is removed from the collection before the partial
-      //is frozen / destroyed
-      model.off('change', onModelChange, this);
-    }, this);
     return this.renderTemplate(itemTemplate, (this.itemContext && this.itemContext(model, i)) || model.attributes)
   }
 }
