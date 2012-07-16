@@ -75,6 +75,7 @@
     }
   },
   "templates": {
+    "template": "Application.template('{{{name}}}', '{{{data}}}');",
     "js/init.js": [
       "templates/application.handlebars"
     ]
@@ -90,9 +91,7 @@
       "nib"
     ]
   },
-  "templateCache": "Application.template",
-  "moduleStartTemplate": "{{{scope}}} = (function() {var module = {exports: {}}; var exports = module.exports; {{^isTopNamespace}}Thorax.addModuleMethods(module, {{{name}}});{{/isTopNamespace}}",
-  "moduleEndTemplate": "return module.exports;}).call(this);",
-  "templateTemplate": "{{{templateCache}}}('{{{name}}}', '{{{data}}}');",
-  "precompiledTemplate": "{{{templateCache}}}('{{{name}}}', {{{data}}});"
+  "scope": {
+    "template": "templates/module.handlebars"
+  }
 }
