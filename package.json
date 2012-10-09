@@ -1,8 +1,11 @@
 {
   "name": "thorax",
-  "version": "2.0.0b4",
+  "version": "4.0.0-fuckitall",
   "description": "Handlebars + Backbone",
-  "keywords": ["backbone", "handlebars"],
+  "keywords": [
+    "backbone",
+    "handlebars"
+  ],
   "authors": [
     "Ryan Eastridge <ryan@eastridge.xxx> (http://eastridge.xxx)",
     "Kevin Decker <kpdecker@gmail.com> (http://incaseofstairs.com)"
@@ -25,15 +28,30 @@
   "plugins": {
     "mixin": [],
     "event": [],
-    "model": ["event"],
-    "collection": ["event", "model"],
+    "model": [
+      "event"
+    ],
+    "collection": [
+      "event",
+      "model"
+    ],
     "helpers": [],
-    "form": ["model"],
+    "form": [
+      "model"
+    ],
     "view-controller": [],
-    "loading": ["event", "model", "collection"],
-    "mobile": ["event"]
+    "loading": [
+      "event",
+      "model",
+      "collection"
+    ],
+    "mobile": [
+      "event"
+    ]
   },
   "bin": {
     "thorax": "bin/thorax"
-  }
+  },
+  "devDependencies": {},
+  "optionalDependencies": {}
 }
